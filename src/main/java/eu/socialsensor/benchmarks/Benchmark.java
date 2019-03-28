@@ -1,13 +1,13 @@
 package eu.socialsensor.benchmarks;
 
+
 /**
  * Represents the benchmarks
- * 
+ *
  * @author sotbeis
  * @email sotbeis@iti.gr
  */
-public interface Benchmark
-{
+public interface Benchmark {
 
     /**
      * Start the selected benchmark

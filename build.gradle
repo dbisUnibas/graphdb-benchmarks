@@ -1,0 +1,141 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        // Shadowing; used to make a fat jar
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+
+repositories {
+    // Local maven repository
+    mavenLocal()
+
+    // DBIS Artifactory
+    maven {
+        url 'http://dbis-artifactory.dmi.unibas.ch/dbis-internal/'
+    }
+
+    // local lib folder
+    //flatDir {
+    //    dirs 'libs'
+    //}
+
+    // Maven Central
+    mavenCentral()
+
+    //
+    jcenter()
+}
+
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'idea'
+apply plugin: 'maven'
+
+
+group = 'eu.socialsensor'
+version = '1.0'
+
+
+description = "Graph DB Benchmarking Client"
+
+mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark.java"
+
+
+compileJava.options.encoding = 'UTF-8'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+
+        inheritOutputDirs = false
+        outputDir = file("${project.buildDir}/classes/main")
+        testOutputDir = file("${project.buildDir}/classes/test")
+    }
+}
+
+
+dependencies {
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.18'
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.1'
+	compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
+	
+    compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0-SNAPSHOT'
+    compile group: 'com.github.rvesse', name: 'airline', version: '2.2.0'
+	
+    compile group: 'org.antlr', name: 'antlr-runtime', version:'3.2'
+    compile group: 'com.google.guava', name: 'guava', version:'14.0.1'
+    compile group: 'colt', name: 'colt', version:'1.2.0'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.7'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version:'4.0'
+    compile group: 'org.apache.commons', name: 'commons-math3', version:'3.4.1'
+    compile group: 'commons-configuration', name: 'commons-configuration', version:'1.6'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.3.2'
+    compile group: 'org.apache.geronimo.specs', name: 'geronimo-jta_1.1_spec', version:'1.1.1'
+    compile group: 'com.tinkerpop.gremlin', name: 'gremlin-groovy', version:'2.6.0'
+    compile group: 'com.tinkerpop.gremlin', name: 'gremlin-java', version:'2.6.0'
+    compile group: 'com.github.stephenc.high-scale-lib', name: 'high-scale-lib', version:'1.1.2'
+    compile group: 'com.carrotsearch', name: 'hppc', version:'0.4.2'
+    compile group: 'com.sleepycat', name: 'je', version:'5.0.73'
+    compile group: 'net.java.dev.jna', name: 'jna', version:'4.0.0'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version:'3.6.2'
+    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'2.0.1'
+    compile group: 'org.neo4j', name: 'neo4j', version:'2.0.1'
+    compile(group: 'com.tinkerpop.blueprints', name: 'blueprints-neo4j2-graph', version:'2.6.0') { exclude(module: 'logback-classic') }
+    compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version:'2.2.5'
+    compile group: 'com.tinkerpop', name: 'pipes', version:'2.6.0'
+    compile group: 'org.iq80.snappy', name: 'snappy', version:'0.3'
+    compile group: 'com.spatial4j', name: 'spatial4j', version:'0.3'
+    compile group: 'com.thinkaurelius.titan', name: 'titan-berkeleyje', version:'0.5.4'
+    compile group: 'com.thinkaurelius.titan', name: 'titan-cassandra', version:'0.5.4'
+    compile group: 'com.thinkaurelius.titan', name: 'titan-hbase', version:'0.5.4'
+    compile group: 'com.thinkaurelius.titan', name: 'titan-core', version:'0.5.4'
+    compile group: 'org.apache.hbase', name: 'hbase-client', version:'0.98.8-hadoop2'
+    compile group: 'com.sparsity', name: 'sparkseejava', version:'5.0.0'
+    compile group: 'com.tinkerpop.blueprints', name: 'blueprints-sparksee-graph', version:'2.6.0'
+    compile group: 'com.codahale.metrics', name: 'metrics-core', version:'3.0.0-BETA3'
+	
+	// ----- test -----
+    testCompile group: 'junit', name: 'junit', version:'4.11'
+}
+
+
+jar {
+    manifest {
+        attributes "Manifest-Version": "1.0"
+        attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
+        attributes "Version": "$version"
+        attributes "Main-Class": mainClassName
+    }
+}
+
+
+javadoc {
+    failOnError = false
+}
+
+

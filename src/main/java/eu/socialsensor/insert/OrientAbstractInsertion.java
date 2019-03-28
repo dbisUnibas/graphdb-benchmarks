@@ -15,10 +15,11 @@
  *  *  limitations under the License.
  *  *
  *  * For more information: http://www.orientechnologies.com
- *  
+ *
  */
 
 package eu.socialsensor.insert;
+
 
 import org.apache.log4j.Logger;
 
@@ -28,45 +29,47 @@ import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientExtendedGraph;
 
+
 /**
  * Implementation of single Insertion in OrientDB graph database
- * 
+ *
  * @author sotbeis
  * @email sotbeis@iti.gr
- * 
  */
 public abstract class OrientAbstractInsertion implements Insertion {
-	
-	public static String INSERTION_TIMES_OUTPUT_PATH = null;
 
-	protected OrientExtendedGraph orientGraph = null;
-	protected Logger logger = Logger.getLogger(OrientAbstractInsertion.class);
+    public static String INSERTION_TIMES_OUTPUT_PATH = null;
 
-	protected OIndex<?> index;
+    protected OrientExtendedGraph orientGraph = null;
+    protected Logger logger = Logger.getLogger( OrientAbstractInsertion.class );
 
-	public OrientAbstractInsertion(OrientExtendedGraph orientGraph) {
-		this.orientGraph = orientGraph;
-	}
+    protected OIndex<?> index;
 
-	protected Vertex getOrCreate(final String value) {
-		final int key = Integer.parseInt(value);
 
-		Vertex v;
-		if (index == null) {
-			index = orientGraph.getRawGraph().getMetadata().getIndexManager().getIndex("V.nodeId");
-		}
-			
-		final OIdentifiable rec = (OIdentifiable) index.get(key);
-		if (rec != null) {
-			return orientGraph.getVertex(rec);
-		}
-		
-		v = orientGraph.addVertex(key, "nodeId", key);
-  
-		if (orientGraph instanceof TransactionalGraph) {
-			((TransactionalGraph) orientGraph).commit();
-		}
+    public OrientAbstractInsertion( OrientExtendedGraph orientGraph ) {
+        this.orientGraph = orientGraph;
+    }
 
-		return v;
-	}
+
+    protected Vertex getOrCreate( final String value ) {
+        final int key = Integer.parseInt( value );
+
+        Vertex v;
+        if ( index == null ) {
+            index = orientGraph.getRawGraph().getMetadata().getIndexManager().getIndex( "V.nodeId" );
+        }
+
+        final OIdentifiable rec = (OIdentifiable) index.get( key );
+        if ( rec != null ) {
+            return orientGraph.getVertex( rec );
+        }
+
+        v = orientGraph.addVertex( key, "nodeId", key );
+
+        if ( orientGraph instanceof TransactionalGraph ) {
+            ((TransactionalGraph) orientGraph).commit();
+        }
+
+        return v;
+    }
 }
