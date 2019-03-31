@@ -3,7 +3,6 @@ package eu.socialsensor.graphdatabases;
 
 import com.google.common.collect.Iterables;
 import com.orientechnologies.common.collection.OMultiCollectionIterator;
-import com.orientechnologies.common.util.OCallable;
 import com.orientechnologies.orient.core.command.OBasicCommandContext;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.core.id.ORID;
@@ -13,7 +12,6 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.impls.orient.OrientBaseGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientEdgeType;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
@@ -146,7 +144,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public Set<Integer> getNeighborsIds( int nodeId ) {
-        Set<Integer> neighbours = new HashSet<Integer>();
+        Set<Integer> neighbours = new HashSet<>();
         Vertex vertex = graph.getVertices( NODE_ID, nodeId ).iterator().next();
         for ( Vertex v : vertex.getVertices( Direction.IN, SIMILAR ) ) {
             Integer neighborId = v.getProperty( NODE_ID );
@@ -159,8 +157,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     @Override
     public double getNodeWeight( int nodeId ) {
         Vertex vertex = graph.getVertices( NODE_ID, nodeId ).iterator().next();
-        double weight = getNodeOutDegree( vertex );
-        return weight;
+        return getNodeOutDegree( vertex );
     }
 
 
@@ -191,14 +188,12 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities ) {
-        Set<Integer> communities = new HashSet<Integer>();
+        Set<Integer> communities = new HashSet<>();
         Iterable<Vertex> vertices = graph.getVertices( NODE_COMMUNITY, nodeCommunities );
         for ( Vertex vertex : vertices ) {
             for ( Vertex v : vertex.getVertices( Direction.OUT, SIMILAR ) ) {
                 int community = v.getProperty( COMMUNITY );
-                if ( !communities.contains( community ) ) {
-                    communities.add( community );
-                }
+                communities.add( community );
             }
         }
         return communities;
@@ -207,7 +202,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public Set<Integer> getNodesFromCommunity( int community ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
         Iterable<Vertex> iter = graph.getVertices( COMMUNITY, community );
         for ( Vertex v : iter ) {
             Integer nodeId = v.getProperty( NODE_ID );
@@ -219,7 +214,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public Set<Integer> getNodesFromNodeCommunity( int nodeCommunity ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
         Iterable<Vertex> iter = graph.getVertices( "nodeCommunity", nodeCommunity );
         for ( Vertex v : iter ) {
             Integer nodeId = v.getProperty( NODE_ID );
@@ -290,7 +285,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public int reInitializeCommunities() {
-        Map<Integer, Integer> initCommunities = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> initCommunities = new HashMap<>();
         int communityCounter = 0;
         for ( Vertex v : graph.getVertices() ) {
             int communityId = v.getProperty( COMMUNITY );
@@ -314,8 +309,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
         }
 
         Vertex vertex = result.next();
-        int community = vertex.getProperty( COMMUNITY );
-        return community;
+        return vertex.getProperty( COMMUNITY );
     }
 
 
@@ -329,12 +323,10 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     @Override
     public int getCommunitySize( int community ) {
         Iterable<Vertex> vertices = graph.getVertices( COMMUNITY, community );
-        Set<Integer> nodeCommunities = new HashSet<Integer>();
+        Set<Integer> nodeCommunities = new HashSet<>();
         for ( Vertex v : vertices ) {
             int nodeCommunity = v.getProperty( NODE_COMMUNITY );
-            if ( !nodeCommunities.contains( nodeCommunity ) ) {
-                nodeCommunities.add( nodeCommunity );
-            }
+            nodeCommunities.add( nodeCommunity );
         }
         return nodeCommunities.size();
     }
@@ -342,10 +334,10 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
     @Override
     public Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities ) {
-        Map<Integer, List<Integer>> communities = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> communities = new HashMap<>();
         for ( int i = 0; i < numberOfCommunities; i++ ) {
             Iterator<Vertex> verticesIter = graph.getVertices( COMMUNITY, i ).iterator();
-            List<Integer> vertices = new ArrayList<Integer>();
+            List<Integer> vertices = new ArrayList<>();
             while ( verticesIter.hasNext() ) {
                 Integer nodeId = verticesIter.next().getProperty( NODE_ID );
                 vertices.add( nodeId );
@@ -357,26 +349,22 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
 
 
     protected void createSchema() {
-        graph.executeOutsideTx( new OCallable<Object, OrientBaseGraph>() {
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            @Override
-            public Object call( final OrientBaseGraph g ) {
-                OrientVertexType v = g.getVertexBaseType();
-                if ( !v.existsProperty( NODE_ID ) ) { // TODO fix schema detection hack later
-                    v.createProperty( NODE_ID, OType.INTEGER );
-                    g.createKeyIndex( NODE_ID, Vertex.class, new Parameter( "type", "UNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
+        graph.executeOutsideTx( g -> {
+            OrientVertexType v = g.getVertexBaseType();
+            if ( !v.existsProperty( NODE_ID ) ) { // TODO fix schema detection hack later
+                v.createProperty( NODE_ID, OType.INTEGER );
+                g.createKeyIndex( NODE_ID, Vertex.class, new Parameter( "type", "UNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
 
-                    v.createEdgeProperty( Direction.OUT, SIMILAR, OType.LINKBAG );
-                    v.createEdgeProperty( Direction.IN, SIMILAR, OType.LINKBAG );
-                    OrientEdgeType similar = g.createEdgeType( SIMILAR );
-                    similar.createProperty( "out", OType.LINK, v );
-                    similar.createProperty( "in", OType.LINK, v );
-                    g.createKeyIndex( COMMUNITY, Vertex.class, new Parameter( "type", "NOTUNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
-                    g.createKeyIndex( NODE_COMMUNITY, Vertex.class, new Parameter( "type", "NOTUNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
-                }
-
-                return null;
+                v.createEdgeProperty( Direction.OUT, SIMILAR, OType.LINKBAG );
+                v.createEdgeProperty( Direction.IN, SIMILAR, OType.LINKBAG );
+                OrientEdgeType similar = g.createEdgeType( SIMILAR );
+                similar.createProperty( "out", OType.LINK, v );
+                similar.createProperty( "in", OType.LINK, v );
+                g.createKeyIndex( COMMUNITY, Vertex.class, new Parameter( "type", "NOTUNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
+                g.createKeyIndex( NODE_COMMUNITY, Vertex.class, new Parameter( "type", "NOTUNIQUE_HASH_INDEX" ), new Parameter( "keytype", "INTEGER" ) );
             }
+
+            return null;
         } );
     }
 

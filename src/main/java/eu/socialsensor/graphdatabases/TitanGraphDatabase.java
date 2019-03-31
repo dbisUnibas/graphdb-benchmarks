@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.MapConfiguration;
@@ -30,8 +28,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.blueprints.util.wrappers.batch.VertexIDType;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.branch.LoopPipe.LoopBundle;
 
 import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.insert.TitanMassiveInsertion;
@@ -155,7 +151,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
         open( true /* batchLoading */ );
         createSchema();
 
-        batchGraph = new BatchGraph<TitanGraph>( titanGraph, VertexIDType.NUMBER, 100000 /* bufferSize */ );
+        batchGraph = new BatchGraph<>( titanGraph, VertexIDType.NUMBER, 100000 /* bufferSize */ );
         batchGraph.setVertexIdKey( NODE_ID );
         batchGraph.setLoadingFromScratch( true /* fromScratch */ );
     }
@@ -236,31 +232,26 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
     @Override
     public void shortestPath( final Vertex fromNode, Integer node ) {
         final Vertex v2 = titanGraph.getVertices( NODE_ID, node ).iterator().next();
+        // @Override
         @SuppressWarnings("rawtypes") final GremlinPipeline<String, List> pathPipe = new GremlinPipeline<String, List>( fromNode ).as( SIMILAR )
-                .out( SIMILAR ).loop( SIMILAR, new PipeFunction<LoopBundle<Vertex>, Boolean>() {
-                    // @Override
-                    public Boolean compute( LoopBundle<Vertex> bundle ) {
-                        return bundle.getLoops() < 5 && !bundle.getObject().equals( v2 );
-                    }
-                } ).path();
+                .out( SIMILAR ).loop( SIMILAR, bundle -> bundle.getLoops() < 5 && !bundle.getObject().equals( v2 ) ).path();
     }
 
 
     @Override
     public int getNodeCount() {
-        long nodeCount = new GremlinPipeline<Object, Object>( titanGraph ).V().count();
+        long nodeCount = new GremlinPipeline<>( titanGraph ).V().count();
         return (int) nodeCount;
     }
 
 
     @Override
     public Set<Integer> getNeighborsIds( int nodeId ) {
-        Set<Integer> neighbors = new HashSet<Integer>();
+        Set<Integer> neighbors = new HashSet<>();
         Vertex vertex = titanGraph.getVertices( NODE_ID, nodeId ).iterator().next();
         GremlinPipeline<String, Vertex> pipe = new GremlinPipeline<String, Vertex>( vertex ).out( SIMILAR );
-        Iterator<Vertex> iter = pipe.iterator();
-        while ( iter.hasNext() ) {
-            Integer neighborId = iter.next().getProperty( NODE_ID );
+        for ( Vertex vertex1 : pipe ) {
+            Integer neighborId = vertex1.getProperty( NODE_ID );
             neighbors.add( neighborId );
         }
         return neighbors;
@@ -270,8 +261,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
     @Override
     public double getNodeWeight( int nodeId ) {
         Vertex vertex = titanGraph.getVertices( NODE_ID, nodeId ).iterator().next();
-        double weight = getNodeOutDegree( vertex );
-        return weight;
+        return getNodeOutDegree( vertex );
     }
 
 
@@ -300,13 +290,12 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities ) {
-        Set<Integer> communities = new HashSet<Integer>();
+        Set<Integer> communities = new HashSet<>();
         Iterable<Vertex> vertices = titanGraph.getVertices( NODE_COMMUNITY, nodeCommunities );
         for ( Vertex vertex : vertices ) {
             GremlinPipeline<String, Vertex> pipe = new GremlinPipeline<String, Vertex>( vertex ).out( SIMILAR );
-            Iterator<Vertex> iter = pipe.iterator();
-            while ( iter.hasNext() ) {
-                int community = iter.next().getProperty( COMMUNITY );
+            for ( Vertex vertex1 : pipe ) {
+                int community = vertex1.getProperty( COMMUNITY );
                 communities.add( community );
             }
         }
@@ -316,7 +305,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public Set<Integer> getNodesFromCommunity( int community ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
         Iterable<Vertex> iter = titanGraph.getVertices( COMMUNITY, community );
         for ( Vertex v : iter ) {
             Integer nodeId = v.getProperty( NODE_ID );
@@ -328,7 +317,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public Set<Integer> getNodesFromNodeCommunity( int nodeCommunity ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
         Iterable<Vertex> iter = titanGraph.getVertices( NODE_COMMUNITY, nodeCommunity );
         for ( Vertex v : iter ) {
             Integer nodeId = v.getProperty( NODE_ID );
@@ -396,7 +385,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public int reInitializeCommunities() {
-        Map<Integer, Integer> initCommunities = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> initCommunities = new HashMap<>();
         int communityCounter = 0;
         for ( Vertex v : titanGraph.getVertices() ) {
             int communityId = v.getProperty( COMMUNITY );
@@ -415,8 +404,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
     @Override
     public int getCommunity( int nodeCommunity ) {
         Vertex vertex = titanGraph.getVertices( NODE_COMMUNITY, nodeCommunity ).iterator().next();
-        int community = vertex.getProperty( COMMUNITY );
-        return community;
+        return vertex.getProperty( COMMUNITY );
     }
 
 
@@ -430,12 +418,10 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
     @Override
     public int getCommunitySize( int community ) {
         Iterable<Vertex> vertices = titanGraph.getVertices( COMMUNITY, community );
-        Set<Integer> nodeCommunities = new HashSet<Integer>();
+        Set<Integer> nodeCommunities = new HashSet<>();
         for ( Vertex v : vertices ) {
             int nodeCommunity = v.getProperty( NODE_COMMUNITY );
-            if ( !nodeCommunities.contains( nodeCommunity ) ) {
-                nodeCommunities.add( nodeCommunity );
-            }
+            nodeCommunities.add( nodeCommunity );
         }
         return nodeCommunities.size();
     }
@@ -443,10 +429,10 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities ) {
-        Map<Integer, List<Integer>> communities = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> communities = new HashMap<>();
         for ( int i = 0; i < numberOfCommunities; i++ ) {
             Iterator<Vertex> verticesIter = titanGraph.getVertices( COMMUNITY, i ).iterator();
-            List<Integer> vertices = new ArrayList<Integer>();
+            List<Integer> vertices = new ArrayList<>();
             while ( verticesIter.hasNext() ) {
                 Integer nodeId = verticesIter.next().getProperty( NODE_ID );
                 vertices.add( nodeId );
@@ -500,7 +486,7 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public void cleanupVertexIterator( Iterator<Vertex> it ) {
-        return; // NOOP - do nothing
+        // NOOP - do nothing
     }
 
 
@@ -560,6 +546,6 @@ public class TitanGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Iter
 
     @Override
     public Vertex getVertex( Integer i ) {
-        return titanGraph.getVertices( NODE_ID, i.intValue() ).iterator().next();
+        return titanGraph.getVertices( NODE_ID, i ).iterator().next();
     }
 }

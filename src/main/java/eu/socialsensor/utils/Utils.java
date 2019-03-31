@@ -43,7 +43,7 @@ public class Utils {
 
 
     public static List<List<Double>> getDocumentsAs2dList( String docPath, int scenarios ) {
-        List<List<Double>> data = new ArrayList<List<Double>>( scenarios );
+        List<List<Double>> data = new ArrayList<>( scenarios );
         for ( int i = 0; i < scenarios; i++ ) {
             File intermediateFile = new File( docPath + "." + (i + 1) );
             if ( !intermediateFile.exists() ) {
@@ -68,7 +68,7 @@ public class Utils {
         } catch ( IOException e ) {
             throw new BenchmarkingException( "Unable to read lines from file: " + file.getAbsolutePath(), e );
         }
-        List<String> result = new LinkedList<String>();
+        List<String> result = new LinkedList<>();
         try {
             while ( it.hasNext() ) {
                 result.add( it.nextLine() );
@@ -85,7 +85,7 @@ public class Utils {
         if ( numberOfLinesToSkip < 0 || numberOfLinesToSkip > lines.size() ) {
             throw new IllegalArgumentException( "can skip at least zero and at most lines.size lines" );
         }
-        List<List<String>> result = new LinkedList<List<String>>();
+        List<List<String>> result = new LinkedList<>();
 
         lines.subList( numberOfLinesToSkip, lines.size() ).parallelStream().forEachOrdered( line -> result.add( Arrays.asList( line.split( "\t" ) ) ) );
         return result;
@@ -133,7 +133,7 @@ public class Utils {
 
     public static List<Double> getListFromTextDoc( File file ) {
         List<String> lines = readlines( file );
-        List<Double> values = new ArrayList<Double>( lines.size() );
+        List<Double> values = new ArrayList<>( lines.size() );
         for ( String line : lines ) {
             values.add( Double.valueOf( line.trim() ) );
         }
@@ -213,7 +213,7 @@ public class Utils {
         }
         double[] result = new double[list.size()];
         for ( int i = 0; i < list.size(); i++ ) {
-            result[i] = list.get( i ).doubleValue();
+            result[i] = list.get( i );
         }
 
         return result;
@@ -229,8 +229,8 @@ public class Utils {
             throw new IllegalArgumentException( "output was a directory: " + output.getAbsolutePath() );
         }
 
-        SortedMap<GraphDatabaseType, Double> means = new TreeMap<GraphDatabaseType, Double>();
-        SortedMap<GraphDatabaseType, Double> standardDeviations = new TreeMap<GraphDatabaseType, Double>();
+        SortedMap<GraphDatabaseType, Double> means = new TreeMap<>();
+        SortedMap<GraphDatabaseType, Double> standardDeviations = new TreeMap<>();
         for ( GraphDatabaseType type : times.keySet() ) {
             final double[] scaledTimesArray = MathArrays.scale( 0.001, convert( times.get( type ) ) );
             DescriptiveStatistics stats = new DescriptiveStatistics();
@@ -256,9 +256,9 @@ public class Utils {
 
     public static List<Double> calculateMeanList( List<List<Double>> lists ) {
         if ( lists == null || lists.isEmpty() ) {
-            return new ArrayList<Double>( 0 );
+            return new ArrayList<>( 0 );
         }
-        List<Double> result = new ArrayList<Double>();
+        List<Double> result = new ArrayList<>();
         for ( List<Double> list : lists ) {
             result.add( new DescriptiveStatistics( convert( list ) ).getMean() );
         }

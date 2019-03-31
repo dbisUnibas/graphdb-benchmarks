@@ -37,6 +37,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'idea'
 apply plugin: 'maven'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 
 group = 'eu.socialsensor'
@@ -45,7 +46,7 @@ version = '1.0'
 
 description = "Graph DB Benchmarking Client"
 
-mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark.java"
+mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark"
 
 
 compileJava.options.encoding = 'UTF-8'
@@ -84,7 +85,7 @@ dependencies {
 	compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
 	
-    compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0-SNAPSHOT'
+   // compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0-SNAPSHOT'
     compile group: 'com.github.rvesse', name: 'airline', version: '2.2.0'
 	
     compile group: 'org.antlr', name: 'antlr-runtime', version:'3.2'
@@ -103,8 +104,8 @@ dependencies {
     compile group: 'com.sleepycat', name: 'je', version:'5.0.73'
     compile group: 'net.java.dev.jna', name: 'jna', version:'4.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-core', version:'3.6.2'
-    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'2.0.1'
-    compile group: 'org.neo4j', name: 'neo4j', version:'2.0.1'
+    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'2.1.8'
+    compile group: 'org.neo4j', name: 'neo4j', version:'2.1.8'
     compile(group: 'com.tinkerpop.blueprints', name: 'blueprints-neo4j2-graph', version:'2.6.0') { exclude(module: 'logback-classic') }
     compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version:'2.2.5'
     compile group: 'com.tinkerpop', name: 'pipes', version:'2.6.0'
@@ -131,6 +132,21 @@ jar {
         attributes "Version": "$version"
         attributes "Main-Class": mainClassName
     }
+}
+
+
+shadowJar {
+    classifier = null
+    zip64 = true
+}
+
+
+assemble.dependsOn shadowJar
+
+
+artifacts {
+//    archives jar
+    archives shadowJar
 }
 
 

@@ -17,7 +17,7 @@ public enum BenchmarkType {
     FIND_SHORTEST_PATH( "Find Shortest Path", "FindShortest" ),
     CLUSTERING( "Clustering", "Clustering" );
 
-    public static final Set<BenchmarkType> INSERTING_BENCHMARK_SET = new HashSet<BenchmarkType>();
+    public static final Set<BenchmarkType> INSERTING_BENCHMARK_SET = new HashSet<>();
 
 
     static {

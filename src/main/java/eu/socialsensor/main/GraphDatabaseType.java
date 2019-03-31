@@ -26,8 +26,8 @@ public enum GraphDatabaseType {
     private final String api;
     private final String shortname;
 
-    public static final Map<String, GraphDatabaseType> STRING_REP_MAP = new HashMap<String, GraphDatabaseType>();
-    public static final Set<GraphDatabaseType> TITAN_FLAVORS = new HashSet<GraphDatabaseType>();
+    public static final Map<String, GraphDatabaseType> STRING_REP_MAP = new HashMap<>();
+    public static final Set<GraphDatabaseType> TITAN_FLAVORS = new HashSet<>();
 
 
     static {

@@ -10,7 +10,6 @@ import java.util.Map;
  * clustering. For now we use only the NMI
  *
  * @author sbeis
- * @email sotbeis@gmail.com
  */
 public class Metrics {
 
@@ -47,12 +46,12 @@ public class Metrics {
             }
         }
         double term2 = 0;
-        for ( int i = 0; i < confusionMatrixActual.length; i++ ) {
-            term2 += confusionMatrixActual[i] * Math.log( confusionMatrixActual[i] / numOfNodes );
+        for ( int i1 : confusionMatrixActual ) {
+            term2 += i1 * Math.log( i1 / numOfNodes );
         }
         double term3 = 0;
-        for ( int j = 0; j < confusionMatrixPredicted.length; j++ ) {
-            term3 += confusionMatrixPredicted[j] * Math.log( confusionMatrixPredicted[j] / numOfNodes );
+        for ( int i : confusionMatrixPredicted ) {
+            term3 += i * Math.log( i / numOfNodes );
         }
         nmi = term1 / (term2 + term3);
         return nmi;
@@ -63,8 +62,8 @@ public class Metrics {
         int actualPartitionsSize = actualPartitions.size();
         int predictedPartitionsSize = predictedPartitions.size();
         int[][] confusionMatrix = new int[actualPartitionsSize][];
-        int actualPartitionsKeys[] = new int[actualPartitionsSize];
-        int predictedPartitionsKeys[] = new int[predictedPartitionsSize];
+        int[] actualPartitionsKeys = new int[actualPartitionsSize];
+        int[] predictedPartitionsKeys = new int[predictedPartitionsSize];
 
         int actualPartitionsIndex = 0;
         for ( int key : actualPartitions.keySet() ) {

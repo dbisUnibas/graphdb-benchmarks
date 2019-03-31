@@ -42,7 +42,7 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
 
     public ClusteringBenchmark( BenchmarkConfiguration config ) {
         super( config, BenchmarkType.CLUSTERING );
-        this.cacheValues = new ArrayList<Integer>();
+        this.cacheValues = new ArrayList<>();
         if ( config.getCacheValues() == null ) {
             int cacheValueMultiplier = config.getCacheIncrementFactor().intValue() * config.getNodesCount();
             for ( int i = 1; i <= config.getCacheValuesCount(); i++ ) {
@@ -57,7 +57,7 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
     @Override
     public void startBenchmarkInternal() {
         LOG.info( "Executing Clustering Benchmark . . . ." );
-        SortedMap<GraphDatabaseType, Map<Integer, Double>> typeTimesMap = new TreeMap<GraphDatabaseType, Map<Integer, Double>>();
+        SortedMap<GraphDatabaseType, Map<Integer, Double>> typeTimesMap = new TreeMap<>();
         try {
             for ( GraphDatabaseType type : bench.getSelectedDatabases() ) {
                 typeTimesMap.put( type, clusteringBenchmark( type ) );
@@ -84,7 +84,7 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
         GraphDatabase<?, ?, ?, ?> graphDatabase = Utils.createDatabaseInstance( bench, type );
         graphDatabase.open();
 
-        SortedMap<Integer, Double> timeMap = new TreeMap<Integer, Double>();
+        SortedMap<Integer, Double> timeMap = new TreeMap<>();
         for ( int cacheSize : cacheValues ) {
             LOG.info( "Graph Database: " + type.getShortname() + ", Dataset: " + bench.getDataset().getName() + ", Cache Size: " + cacheSize );
 
@@ -107,7 +107,7 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
 
 
     private static Map<Integer, List<Integer>> mapNodesToCommunities( List<List<String>> tabulatedLines ) {
-        Map<Integer, List<Integer>> communities = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> communities = new HashMap<>();
         // http://figshare.com/articles/Synthetic_Data_for_graphdb_benchmark/1221760
         // the format of the communityNNNN.dat files have node and community
         // number separated by a tab.
@@ -116,7 +116,7 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
             int node = Integer.valueOf( line.get( 0 ) );
             int community = Integer.valueOf( line.get( 1 ).trim() ) - 1;
             if ( !communities.containsKey( community ) ) {
-                communities.put( community, new ArrayList<Integer>() );
+                communities.put( community, new ArrayList<>() );
             }
             communities.get( community ).add( node );
         }

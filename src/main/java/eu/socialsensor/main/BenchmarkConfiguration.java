@@ -23,7 +23,7 @@ import eu.socialsensor.dataset.DatasetFactory;
  */
 public class BenchmarkConfiguration {
 
-    // orientdb Configuration
+    // OrientDB Configuration
     private static final String LIGHTWEIGHT_EDGES = "lightweight-edges";
 
     // Sparksee / DEX configuration
@@ -52,7 +52,7 @@ public class BenchmarkConfiguration {
     private static final String PERMUTE_BENCHMARKS = "permute-benchmarks";
     private static final String RANDOM_NODES = "shortest-path-random-nodes";
 
-    private static final Set<String> metricsReporters = new HashSet<String>();
+    private static final Set<String> metricsReporters = new HashSet<>();
 
 
     static {
@@ -121,7 +121,7 @@ public class BenchmarkConfiguration {
         Configuration sparksee = socialsensor.subset( "sparksee" );
         sparkseeLicenseKey = sparksee.containsKey( LICENSE_KEY ) ? sparksee.getString( LICENSE_KEY ) : null;
 
-        Configuration titan = socialsensor.subset( TITAN ); //TODO(amcp) move dynamodb ns into titan
+        Configuration titan = socialsensor.subset( TITAN ); //TODO(amcp) move DynamoDB ns into titan
         bufferSize = titan.getInt( BUFFER_SIZE, GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue() );
         blocksize = titan.getInt( IDS_BLOCKSIZE, GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue() );
         pageSize = titan.getInt( PAGE_SIZE, GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue() );
@@ -142,12 +142,12 @@ public class BenchmarkConfiguration {
         permuteBenchmarks = socialsensor.getBoolean( PERMUTE_BENCHMARKS );
 
         List<?> benchmarkList = socialsensor.getList( "benchmarks" );
-        benchmarkTypes = new ArrayList<BenchmarkType>();
+        benchmarkTypes = new ArrayList<>();
         for ( Object str : benchmarkList ) {
             benchmarkTypes.add( BenchmarkType.valueOf( str.toString() ) );
         }
 
-        selectedDatabases = new TreeSet<GraphDatabaseType>();
+        selectedDatabases = new TreeSet<>();
         for ( Object database : socialsensor.getList( "databases" ) ) {
             if ( !GraphDatabaseType.STRING_REP_MAP.keySet().contains( database.toString() ) ) {
                 throw new IllegalArgumentException( String.format( "selected database %s not supported", database.toString() ) );
@@ -164,7 +164,7 @@ public class BenchmarkConfiguration {
             throw new IllegalArgumentException( "unable to write to results directory" );
         }
 
-        randomNodes = socialsensor.getInteger( RANDOM_NODES, new Integer( 100 ) );
+        randomNodes = socialsensor.getInteger( RANDOM_NODES, 100 );
 
         if ( this.benchmarkTypes.contains( BenchmarkType.CLUSTERING ) ) {
             if ( !socialsensor.containsKey( NODES_COUNT ) ) {
@@ -185,7 +185,7 @@ public class BenchmarkConfiguration {
             final boolean notGenerating = socialsensor.containsKey( CACHE_VALUES );
             if ( notGenerating ) {
                 List<?> objects = socialsensor.getList( CACHE_VALUES );
-                cacheValues = new ArrayList<Integer>( objects.size() );
+                cacheValues = new ArrayList<>( objects.size() );
                 cacheValuesCount = null;
                 cacheIncrementFactor = null;
                 for ( Object o : objects ) {

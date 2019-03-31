@@ -38,12 +38,12 @@ public class Neo4jSingleInsertion extends InsertionBase<Node> {
 
 
     public Node getOrCreate( String nodeId ) {
-        Node result = null;
+        Node result;
 
         try ( final Transaction tx = ((GraphDatabaseAPI) neo4jGraph).tx().unforced().begin() ) {
             try {
                 String queryString = "MERGE (n:Node {nodeId: {nodeId}}) RETURN n";
-                Map<String, Object> parameters = new HashMap<String, Object>();
+                Map<String, Object> parameters = new HashMap<>();
                 parameters.put( "nodeId", nodeId );
                 ResourceIterator<Node> resultIterator = engine.execute( queryString, parameters ).columnAs( "n" );
                 result = resultIterator.next();

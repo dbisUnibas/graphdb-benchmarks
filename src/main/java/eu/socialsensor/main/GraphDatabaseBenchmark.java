@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 
@@ -130,7 +129,7 @@ public class GraphDatabaseBenchmark {
     /**
      * This is the main function. Set the proper property file and run
      */
-    public static void main( String[] args ) throws ExecutionException {
+    public static void main( String[] args ) {
         final String inputPath = args.length != 1 ? null : args[0];
         GraphDatabaseBenchmark benchmarks = new GraphDatabaseBenchmark( inputPath );
         try {

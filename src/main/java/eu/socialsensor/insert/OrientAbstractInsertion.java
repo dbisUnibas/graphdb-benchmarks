@@ -34,13 +34,12 @@ import com.tinkerpop.blueprints.impls.orient.OrientExtendedGraph;
  * Implementation of single Insertion in OrientDB graph database
  *
  * @author sotbeis
- * @email sotbeis@iti.gr
  */
 public abstract class OrientAbstractInsertion implements Insertion {
 
     public static String INSERTION_TIMES_OUTPUT_PATH = null;
 
-    protected OrientExtendedGraph orientGraph = null;
+    protected OrientExtendedGraph orientGraph;
     protected Logger logger = Logger.getLogger( OrientAbstractInsertion.class );
 
     protected OIndex<?> index;

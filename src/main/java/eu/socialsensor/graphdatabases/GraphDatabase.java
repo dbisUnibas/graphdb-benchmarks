@@ -16,187 +16,187 @@ import java.util.Set;
 public interface GraphDatabase<VertexIteratorType, EdgeIteratorType, VertexType, EdgeType> {
 
     //edge and vertex operations
-    public VertexType getOtherVertexFromEdge( EdgeType r, VertexType oneVertex );
+    VertexType getOtherVertexFromEdge( EdgeType r, VertexType oneVertex );
 
-    public VertexType getSrcVertexFromEdge( EdgeType edge );
+    VertexType getSrcVertexFromEdge( EdgeType edge );
 
-    public VertexType getDestVertexFromEdge( EdgeType edge );
+    VertexType getDestVertexFromEdge( EdgeType edge );
 
-    public VertexType getVertex( Integer i );
+    VertexType getVertex( Integer i );
 
     //edge iterators
-    public EdgeIteratorType getAllEdges();
+    EdgeIteratorType getAllEdges();
 
-    public EdgeIteratorType getNeighborsOfVertex( VertexType v );
+    EdgeIteratorType getNeighborsOfVertex( VertexType v );
 
-    public boolean edgeIteratorHasNext( EdgeIteratorType it );
+    boolean edgeIteratorHasNext( EdgeIteratorType it );
 
-    public EdgeType nextEdge( EdgeIteratorType it );
+    EdgeType nextEdge( EdgeIteratorType it );
 
-    public void cleanupEdgeIterator( EdgeIteratorType it );
+    void cleanupEdgeIterator( EdgeIteratorType it );
 
     //vertex iterators
-    public VertexIteratorType getVertexIterator();
+    VertexIteratorType getVertexIterator();
 
-    public boolean vertexIteratorHasNext( VertexIteratorType it );
+    boolean vertexIteratorHasNext( VertexIteratorType it );
 
-    public VertexType nextVertex( VertexIteratorType it );
+    VertexType nextVertex( VertexIteratorType it );
 
-    public void cleanupVertexIterator( VertexIteratorType it );
+    void cleanupVertexIterator( VertexIteratorType it );
 
     //benchmarks
-    public void findAllNodeNeighbours();
+    void findAllNodeNeighbours();
 
-    public void findNodesOfAllEdges();
+    void findNodesOfAllEdges();
 
     /**
      * Opens the graph database
      */
-    public void open();
+    void open();
 
     /**
      * Creates a graph database and configures for single data insertion
      */
-    public void createGraphForSingleLoad();
+    void createGraphForSingleLoad();
 
     /**
      * Inserts data in massive mode
      *
      * @param dataPath - dataset path
      */
-    public void massiveModeLoading( File dataPath );
+    void massiveModeLoading( File dataPath );
 
     /**
      * Inserts data in single mode
      *
      * @param dataPath - dataset path
      */
-    public void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber );
+    void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber );
 
     /**
      * Creates a graph database and configures for bulk data insertion
      */
-    public void createGraphForMassiveLoad();
+    void createGraphForMassiveLoad();
 
     /**
      * Shut down the graph database
      */
-    public void shutdown();
+    void shutdown();
 
     /**
      * Delete the graph database
      */
-    public void delete();
+    void delete();
 
     /**
      * Shutdown the graph database, which configuration is for massive insertion
      * of data
      */
-    public void shutdownMassiveGraph();
+    void shutdownMassiveGraph();
 
     /**
      * Find the shortest path between vertex 1 and each of the vertexes in the list
      *
      * @param nodes any number of random nodes
      */
-    public void shortestPaths( Set<Integer> nodes );
+    void shortestPaths( Set<Integer> nodes );
 
     /**
      * Execute findShortestPaths query from the Query interface
      */
-    public void shortestPath( final VertexType fromNode, Integer node );
+    void shortestPath( final VertexType fromNode, Integer node );
 
     /**
      * @return the number of nodes
      */
-    public int getNodeCount();
+    int getNodeCount();
 
     /**
      * @return the neighbours of a particular node
      */
-    public Set<Integer> getNeighborsIds( int nodeId );
+    Set<Integer> getNeighborsIds( int nodeId );
 
     /**
      * @return the node degree
      */
-    public double getNodeWeight( int nodeId );
+    double getNodeWeight( int nodeId );
 
     /**
      * Initializes the community and nodeCommunity property in each database
      */
-    public void initCommunityProperty();
+    void initCommunityProperty();
 
     /**
      * @return the communities (communityId) that are connected with a
      * particular nodeCommunity
      */
-    public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities );
+    Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities );
 
     /**
      * @return the nodes a particular community contains
      */
-    public Set<Integer> getNodesFromCommunity( int community );
+    Set<Integer> getNodesFromCommunity( int community );
 
     /**
      * @return the nodes a particular nodeCommunity contains
      */
-    public Set<Integer> getNodesFromNodeCommunity( int nodeCommunity );
+    Set<Integer> getNodesFromNodeCommunity( int nodeCommunity );
 
     /**
      * @return the number of edges between a community and a nodeCommunity
      */
-    public double getEdgesInsideCommunity( int nodeCommunity, int communityNodes );
+    double getEdgesInsideCommunity( int nodeCommunity, int communityNodes );
 
     /**
      * @return the sum of node degrees
      */
-    public double getCommunityWeight( int community );
+    double getCommunityWeight( int community );
 
     /**
      * @return the sum of node degrees
      */
-    public double getNodeCommunityWeight( int nodeCommunity );
+    double getNodeCommunityWeight( int nodeCommunity );
 
     /**
      * Moves a node from a community to another
      */
-    public void moveNode( int from, int to );
+    void moveNode( int from, int to );
 
     /**
      * @return the number of edges of the graph database
      */
-    public double getGraphWeightSum();
+    double getGraphWeightSum();
 
     /**
      * Reinitializes the community and nodeCommunity property
      *
      * @return the number of communities
      */
-    public int reInitializeCommunities();
+    int reInitializeCommunities();
 
     /**
      * @return in which community a particular node belongs
      */
-    public int getCommunityFromNode( int nodeId );
+    int getCommunityFromNode( int nodeId );
 
     /**
      * @return in which community a particular nodeCommunity belongs
      */
-    public int getCommunity( int nodeCommunity );
+    int getCommunity( int nodeCommunity );
 
     /**
      * @return the number of nodeCommunities a particular community contains
      */
-    public int getCommunitySize( int community );
+    int getCommunitySize( int community );
 
     /**
      * @return a map where the key is the community id and the value is the
      * nodes each community has.
      */
-    public Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities );
+    Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities );
 
     /**
      * @return return true if node exist, false if not
      */
-    public boolean nodeExists( int nodeId );
+    boolean nodeExists( int nodeId );
 }

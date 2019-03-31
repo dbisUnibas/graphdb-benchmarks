@@ -53,7 +53,7 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
     @Override
     public void findAllNodeNeighbours() {
         //get the iterator
-        Object tx = null;
+        Transaction tx = null;
         if ( GraphDatabaseType.NEO4J == type ) { //TODO fix this
             tx = ((Neo4jGraphDatabase) this).neo4jGraph.beginTx();
         }
@@ -96,11 +96,11 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
             }
             this.cleanupVertexIterator( vertexIterator );
             if ( this instanceof Neo4jGraphDatabase ) {
-                ((Transaction) tx).success();
+                tx.success();
             }
         } finally {//TODO fix this
             if ( GraphDatabaseType.NEO4J == type ) {
-                ((Transaction) tx).finish();
+                tx.finish();
             }
         }
     }
@@ -108,7 +108,7 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
 
     @Override
     public void findNodesOfAllEdges() {
-        Object tx = null;
+        Transaction tx = null;
         if ( GraphDatabaseType.NEO4J == type ) {//TODO fix this
             tx = ((GraphDatabaseAPI) ((Neo4jGraphDatabase) this).neo4jGraph).tx().unforced().begin();
         }
@@ -137,7 +137,7 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
             }
         } finally {//TODO fix this
             if ( GraphDatabaseType.NEO4J == type ) {
-                ((Transaction) tx).close();
+                tx.close();
             }
         }
     }
@@ -145,7 +145,7 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
 
     @Override
     public void shortestPaths( Set<Integer> nodes ) {
-        Object tx = null;
+        Transaction tx = null;
         if ( GraphDatabaseType.NEO4J == type ) {//TODO fix this
             tx = ((Neo4jGraphDatabase) this).neo4jGraph.beginTx();
         }
@@ -163,11 +163,11 @@ public abstract class GraphDatabaseBase<VertexIteratorType, EdgeIteratorType, Ve
                 }
             }
             if ( this instanceof Neo4jGraphDatabase ) {
-                ((Transaction) tx).success();
+                tx.success();
             }
         } finally {//TODO fix this
             if ( GraphDatabaseType.NEO4J == type ) {
-                ((Transaction) tx).finish();
+                tx.finish();
             }
         }
     }

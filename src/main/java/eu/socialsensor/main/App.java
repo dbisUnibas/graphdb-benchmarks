@@ -26,7 +26,6 @@
 package eu.socialsensor.main;
 
 
-import ch.unibas.dmi.dbis.chronos.agent.AbstractChronosAgent;
 import com.github.rvesse.airline.SingleCommand;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;

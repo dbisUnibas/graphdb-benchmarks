@@ -27,21 +27,21 @@ public class Dataset implements Iterable<List<String>> {
 
 
     public Set<Integer> generateRandomNodes( int numRandomNodes ) {
-        Set<String> nodes = new HashSet<String>();
+        Set<String> nodes = new HashSet<>();
         for ( List<String> line : data.subList( 4, data.size() ) ) {
             for ( String nodeId : line ) {
                 nodes.add( nodeId.trim() );
             }
         }
 
-        List<String> nodeList = new ArrayList<String>( nodes );
+        List<String> nodeList = new ArrayList<>( nodes );
         int[] nodeIndexList = new int[nodeList.size()];
         for ( int i = 0; i < nodeList.size(); i++ ) {
             nodeIndexList[i] = i;
         }
         MathArrays.shuffle( nodeIndexList );
 
-        Set<Integer> generatedNodes = new HashSet<Integer>();
+        Set<Integer> generatedNodes = new HashSet<>();
         for ( int i = 0; i < numRandomNodes; i++ ) {
             generatedNodes.add( Integer.valueOf( nodeList.get( nodeIndexList[i] ) ) );
         }

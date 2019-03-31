@@ -57,7 +57,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
     private BatchInserter inserter = null;
 
 
-    public static enum RelTypes implements RelationshipType {
+    public enum RelTypes implements RelationshipType {
         SIMILAR
     }
 
@@ -75,7 +75,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
         neo4jGraph = new GraphDatabaseFactory().newEmbeddedDatabase( dbStorageDirectory.getAbsolutePath() );
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
-                neo4jGraph.schema().awaitIndexesOnline( 10l, TimeUnit.MINUTES );
+                neo4jGraph.schema().awaitIndexesOnline( 10L, TimeUnit.MINUTES );
                 tx.success();
             } catch ( Exception e ) {
                 tx.failure();
@@ -105,7 +105,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public void createGraphForMassiveLoad() {
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         config.put( "cache_type", "none" );
         config.put( "use_memory_mapped_buffers", "true" );
         config.put( "neostore.nodestore.db.mapped_memory", "200M" );
@@ -195,7 +195,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public int getNodeCount() {
-        int nodeCount = 0;
+        int nodeCount;
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 nodeCount = IteratorUtil.count( GlobalGraphOperations.at( neo4jGraph ).getAllNodes() );
@@ -212,7 +212,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public Set<Integer> getNeighborsIds( int nodeId ) {
-        Set<Integer> neighbors = new HashSet<Integer>();
+        Set<Integer> neighbors = new HashSet<>();
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 Node n = neo4jGraph.findNodesByLabelAndProperty( NODE_LABEL, NODE_ID, String.valueOf( nodeId ) ).iterator().next();
@@ -234,7 +234,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public double getNodeWeight( int nodeId ) {
-        double weight = 0;
+        double weight;
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 Node n = neo4jGraph.findNodesByLabelAndProperty( NODE_LABEL, NODE_ID, String.valueOf( nodeId ) ).iterator().next();
@@ -285,7 +285,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities ) {
-        Set<Integer> communities = new HashSet<Integer>();
+        Set<Integer> communities = new HashSet<>();
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 ResourceIterable<Node> nodes = neo4jGraph.findNodesByLabelAndProperty( Neo4jGraphDatabase.NODE_LABEL, NODE_COMMUNITY, nodeCommunities );
@@ -309,7 +309,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public Set<Integer> getNodesFromCommunity( int community ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 ResourceIterable<Node> iter = neo4jGraph.findNodesByLabelAndProperty( NODE_LABEL, COMMUNITY, community );
@@ -329,7 +329,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public Set<Integer> getNodesFromNodeCommunity( int nodeCommunity ) {
-        Set<Integer> nodes = new HashSet<Integer>();
+        Set<Integer> nodes = new HashSet<>();
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
@@ -439,7 +439,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public double getGraphWeightSum() {
-        int edgeCount = 0;
+        int edgeCount;
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
@@ -457,7 +457,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public int reInitializeCommunities() {
-        Map<Integer, Integer> initCommunities = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> initCommunities = new HashMap<>();
         int communityCounter = 0;
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
@@ -485,7 +485,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public int getCommunity( int nodeCommunity ) {
-        Integer community = 0;
+        Integer community;
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
@@ -504,7 +504,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public int getCommunityFromNode( int nodeId ) {
-        Integer community = 0;
+        Integer community;
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 Node node = neo4jGraph.findNodesByLabelAndProperty( NODE_LABEL, NODE_ID, String.valueOf( nodeId ) ).iterator().next();
@@ -522,7 +522,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public int getCommunitySize( int community ) {
-        Set<Integer> nodeCommunities = new HashSet<Integer>();
+        Set<Integer> nodeCommunities = new HashSet<>();
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
@@ -544,13 +544,13 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities ) {
-        Map<Integer, List<Integer>> communities = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> communities = new HashMap<>();
 
         try ( final Transaction tx = beginUnforcedTransaction() ) {
             try {
                 for ( int i = 0; i < numberOfCommunities; i++ ) {
                     ResourceIterable<Node> nodesIter = neo4jGraph.findNodesByLabelAndProperty( NODE_LABEL, COMMUNITY, i );
-                    List<Integer> nodes = new ArrayList<Integer>();
+                    List<Integer> nodes = new ArrayList<>();
                     for ( Node n : nodesIter ) {
                         String nodeIdString = (String) (n.getProperty( NODE_ID ));
                         nodes.add( Integer.valueOf( nodeIdString ) );

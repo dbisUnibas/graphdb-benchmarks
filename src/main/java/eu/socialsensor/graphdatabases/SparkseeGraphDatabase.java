@@ -204,7 +204,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public Set<Integer> getNeighborsIds( int nodeId ) {
-        Set<Integer> neighbors = new HashSet<Integer>();
+        Set<Integer> neighbors = new HashSet<>();
         long nodeID = sparkseeGraph.findObject( NODE_ATTRIBUTE, value.setString( String.valueOf( nodeId ) ) );
         Objects neighborsObjects = sparkseeGraph.neighbors( nodeID, EDGE_TYPE, EdgesDirection.Outgoing );
         ObjectsIterator neighborsIter = neighborsObjects.iterator();
@@ -257,7 +257,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunities ) {
-        Set<Integer> communities = new HashSet<Integer>();
+        Set<Integer> communities = new HashSet<>();
         Objects nodes = sparkseeGraph.select( NODE_COMMUNITY_ATTRIBUTE, Condition.Equal, value.setInteger( nodeCommunities ) );
         ObjectsIterator nodesIter = nodes.iterator();
         while ( nodesIter.hasNext() ) {
@@ -280,7 +280,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public Set<Integer> getNodesFromCommunity( int community ) {
-        Set<Integer> nodesFromCommunity = new HashSet<Integer>();
+        Set<Integer> nodesFromCommunity = new HashSet<>();
         Objects nodes = sparkseeGraph.select( COMMUNITY_ATTRIBUTE, Condition.Equal, value.setInteger( community ) );
         ObjectsIterator nodesIter = nodes.iterator();
         while ( nodesIter.hasNext() ) {
@@ -295,7 +295,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public Set<Integer> getNodesFromNodeCommunity( int nodeCommunity ) {
-        Set<Integer> nodesFromNodeCommunity = new HashSet<Integer>();
+        Set<Integer> nodesFromNodeCommunity = new HashSet<>();
         Objects nodes = sparkseeGraph.select( NODE_COMMUNITY_ATTRIBUTE, Condition.Equal, value.setInteger( nodeCommunity ) );
         ObjectsIterator nodesIter = nodes.iterator();
         while ( nodesIter.hasNext() ) {
@@ -385,7 +385,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public int reInitializeCommunities() {
-        Map<Integer, Integer> initCommunities = new HashMap<Integer, Integer>();
+        Map<Integer, Integer> initCommunities = new HashMap<>();
         int communityCounter = 0;
         Objects nodes = sparkseeGraph.select( NODE_TYPE );
         ObjectsIterator nodesIter = nodes.iterator();
@@ -426,7 +426,7 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
     public int getCommunitySize( int community ) {
         Objects nodesFromCommunities = sparkseeGraph.select( COMMUNITY_ATTRIBUTE, Condition.Equal, value.setInteger( community ) );
         ObjectsIterator nodesFromCommunitiesIter = nodesFromCommunities.iterator();
-        Set<Integer> nodeCommunities = new HashSet<Integer>();
+        Set<Integer> nodeCommunities = new HashSet<>();
         while ( nodesFromCommunitiesIter.hasNext() ) {
             Value nodeCommunityId = sparkseeGraph.getAttribute( nodesFromCommunitiesIter.next(), NODE_COMMUNITY_ATTRIBUTE );
             nodeCommunities.add( nodeCommunityId.getInteger() );
@@ -439,11 +439,11 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     @Override
     public Map<Integer, List<Integer>> mapCommunities( int numberOfCommunities ) {
-        Map<Integer, List<Integer>> communities = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> communities = new HashMap<>();
         for ( int i = 0; i < numberOfCommunities; i++ ) {
             Objects nodesFromCommunity = sparkseeGraph.select( COMMUNITY_ATTRIBUTE, Condition.Equal, value.setInteger( i ) );
             ObjectsIterator nodesFromCommunityIter = nodesFromCommunity.iterator();
-            List<Integer> nodes = new ArrayList<Integer>();
+            List<Integer> nodes = new ArrayList<>();
             while ( nodesFromCommunityIter.hasNext() ) {
                 Value nodeId = sparkseeGraph.getAttribute( nodesFromCommunityIter.next(), NODE_ATTRIBUTE );
                 nodes.add( Integer.valueOf( nodeId.getString() ) );

@@ -16,7 +16,7 @@ public class DatasetFactory {
 
 
     private DatasetFactory() {
-        datasetMap = new HashMap<File, Dataset>();
+        datasetMap = new HashMap<>();
     }
 
 

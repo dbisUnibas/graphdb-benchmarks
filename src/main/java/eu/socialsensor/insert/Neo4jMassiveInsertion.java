@@ -19,7 +19,7 @@ import eu.socialsensor.main.GraphDatabaseType;
 public final class Neo4jMassiveInsertion extends InsertionBase<Long> {
 
     private final BatchInserter inserter;
-    Map<Long, Long> cache = new HashMap<Long, Long>();
+    Map<Long, Long> cache = new HashMap<>();
 
 
     public Neo4jMassiveInsertion( BatchInserter inserter ) {

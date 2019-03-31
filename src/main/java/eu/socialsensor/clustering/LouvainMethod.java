@@ -15,7 +15,6 @@ import eu.socialsensor.graphdatabases.GraphDatabase;
  * (https://gephi.org/toolkit/) java implementation was used as guide.
  *
  * @author sotbeis
- * @email sotbeis@iti.gr
  */
 public class LouvainMethod {
 
@@ -30,7 +29,7 @@ public class LouvainMethod {
     Cache cache;
 
 
-    public LouvainMethod( GraphDatabase<?, ?, ?, ?> graphDatabase, int cacheSize, boolean isRandomized ) throws ExecutionException {
+    public LouvainMethod( GraphDatabase<?, ?, ?, ?> graphDatabase, int cacheSize, boolean isRandomized ) {
         this.graphDatabase = graphDatabase;
         this.isRandomized = isRandomized;
         initialize();
@@ -43,7 +42,7 @@ public class LouvainMethod {
         // time on dynamodb.
         this.graphWeightSum = this.graphDatabase.getGraphWeightSum() / 2;
 
-        this.communityWeights = new ArrayList<Double>( this.N );
+        this.communityWeights = new ArrayList<>( this.N );
         for ( int i = 0; i < this.N; i++ ) {
             this.communityWeights.add( 0.0 );
         }
@@ -128,7 +127,7 @@ public class LouvainMethod {
     public void zoomOut() {
         this.N = this.graphDatabase.reInitializeCommunities();
         this.cache.reInitializeCommunities();
-        this.communityWeights = new ArrayList<Double>( this.N );
+        this.communityWeights = new ArrayList<>( this.N );
         for ( int i = 0; i < this.N; i++ ) {
             this.communityWeights.add( graphDatabase.getCommunityWeight( i ) );
         }

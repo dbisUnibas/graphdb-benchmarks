@@ -43,7 +43,7 @@ public abstract class InsertionBase<T> implements Insertion {
 
     protected InsertionBase( GraphDatabaseType type, File resultsPath ) {
         this.type = type;
-        this.insertionTimes = new ArrayList<Double>();
+        this.insertionTimes = new ArrayList<>();
         this.resultsPath = resultsPath;
         this.single = resultsPath != null;
         final String insertionTypeCtxt = type.getShortname() + INSERTION_CONTEXT + (single ? "adhoc." : "batch.");
@@ -118,7 +118,7 @@ public abstract class InsertionBase<T> implements Insertion {
         insertionTimes.add( (double) watch.elapsed( TimeUnit.MILLISECONDS ) );
 
         if ( single ) {
-            Utils.writeTimes( insertionTimes, new File( resultsPath, SingleInsertionBenchmark.INSERTION_TIMES_OUTPUT_FILE_NAME_BASE + "." + type.getShortname() + "." + Integer.toString( scenarioNumber ) ) );
+            Utils.writeTimes( insertionTimes, new File( resultsPath, SingleInsertionBenchmark.INSERTION_TIMES_OUTPUT_FILE_NAME_BASE + "." + type.getShortname() + "." + scenarioNumber ) );
         }
     }
 }

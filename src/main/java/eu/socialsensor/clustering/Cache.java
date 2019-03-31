@@ -17,7 +17,6 @@ import eu.socialsensor.graphdatabases.GraphDatabase;
  * graph databases in order to execute the Louvain Method
  *
  * @author sotbeis
- * @email sotbeis@iti.gr
  */
 public class Cache {
 
@@ -38,7 +37,7 @@ public class Cache {
     // value=communityId
 
 
-    public Cache( final GraphDatabase<?, ?, ?, ?> graphDatabase, int cacheSize ) throws ExecutionException {
+    public Cache( final GraphDatabase<?, ?, ?, ?> graphDatabase, int cacheSize ) {
         nodeNeighbours = CacheBuilder.newBuilder().maximumSize( cacheSize )
                 .build( new CacheLoader<Integer, Set<Integer>>() {
                     public Set<Integer> load( Integer nodeId ) {
@@ -78,7 +77,7 @@ public class Cache {
 
     public Set<Integer> getCommunitiesConnectedToNodeCommunities( int nodeCommunity ) throws ExecutionException {
         Set<Integer> nodesFromNodeCommunity = nodeCommunitiesMap.get( nodeCommunity );
-        Set<Integer> communities = new HashSet<Integer>();
+        Set<Integer> communities = new HashSet<>();
         for ( int nodeFromNodeCommunity : nodesFromNodeCommunity ) {
             Set<Integer> neighbors = nodeNeighbours.get( nodeFromNodeCommunity );
             for ( int neighbor : neighbors ) {

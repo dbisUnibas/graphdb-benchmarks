@@ -30,9 +30,9 @@ public abstract class PermutingBenchmarkBase extends BenchmarkBase {
 
     protected PermutingBenchmarkBase( BenchmarkConfiguration bench, BenchmarkType typeIn ) {
         super( bench, typeIn );
-        times = new HashMap<GraphDatabaseType, List<Double>>();
+        times = new HashMap<>();
         for ( GraphDatabaseType type : bench.getSelectedDatabases() ) {
-            times.put( type, new ArrayList<Double>( bench.getScenarios() ) );
+            times.put( type, new ArrayList<>( bench.getScenarios() ) );
         }
     }
 
@@ -42,7 +42,7 @@ public abstract class PermutingBenchmarkBase extends BenchmarkBase {
         LOG.info( String.format( "Executing %s Benchmark . . . .", type.longname() ) );
 
         if ( bench.permuteBenchmarks() ) {
-            PermutationIterator<GraphDatabaseType> iter = new PermutationIterator<GraphDatabaseType>( bench.getSelectedDatabases() );
+            PermutationIterator<GraphDatabaseType> iter = new PermutationIterator<>( bench.getSelectedDatabases() );
             int cntPermutations = 1;
             while ( iter.hasNext() ) {
                 LOG.info( "Scenario " + cntPermutations );

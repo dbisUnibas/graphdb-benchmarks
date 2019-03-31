@@ -33,7 +33,7 @@ public class TitanSingleInsertion extends InsertionBase<Vertex> {
         Integer intValue = Integer.valueOf( value );
         final Vertex v;
         if ( titanGraph.query().has( "nodeId", Compare.EQUAL, intValue ).vertices().iterator().hasNext() ) {
-            v = (Vertex) titanGraph.query().has( "nodeId", Compare.EQUAL, intValue ).vertices().iterator().next();
+            v = titanGraph.query().has( "nodeId", Compare.EQUAL, intValue ).vertices().iterator().next();
         } else {
             final long titanVertexId = TitanId.toVertexId( intValue );
             v = titanGraph.addVertex( titanVertexId );

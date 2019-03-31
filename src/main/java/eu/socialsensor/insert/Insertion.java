@@ -14,6 +14,6 @@ public interface Insertion {
     /**
      * Loads the data in each graph database
      */
-    public void createGraph( File dataset, int scenarioNumber );
+    void createGraph( File dataset, int scenarioNumber );
 
 }
