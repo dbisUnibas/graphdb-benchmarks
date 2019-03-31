@@ -1,9 +1,10 @@
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
 target/*
-*.class
 /target
 /data
 /.project
-/.gitignore
 /.settings
 /.classpath
 .idea/
@@ -222,5 +223,3 @@ nbdist/
 .idea
 
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
