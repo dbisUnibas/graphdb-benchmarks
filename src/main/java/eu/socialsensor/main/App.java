@@ -26,6 +26,7 @@
 package eu.socialsensor.main;
 
 
+import ch.unibas.dmi.dbis.chronos.agent.AbstractChronosAgent;
 import com.github.rvesse.airline.SingleCommand;
 import com.github.rvesse.airline.annotations.Command;
 import com.github.rvesse.airline.annotations.Option;
@@ -72,8 +73,8 @@ public class App implements Runnable {
             WORKING_DIR.mkdir();
         }
 
-       // AbstractChronosAgent aca = new ChronosAgent( address, port, true, true, environment );
-      //  aca.setDaemon( false );
-       // aca.start();
+        AbstractChronosAgent aca = new ChronosAgent( address, port, true, true, environment );
+        aca.setDaemon( false );
+        aca.start();
     }
 }

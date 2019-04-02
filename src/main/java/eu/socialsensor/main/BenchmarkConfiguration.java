@@ -5,10 +5,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javafx.beans.binding.IntegerBinding;
+import lombok.Getter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
@@ -61,39 +64,40 @@ public class BenchmarkConfiguration {
     }
 
 
-    private final File dataset;
-    private final List<BenchmarkType> benchmarkTypes;
-    private final SortedSet<GraphDatabaseType> selectedDatabases;
-    private final File resultsPath;
+    @Getter private final File dataset;
+    @Getter private final List<BenchmarkType> benchmarkTypes;
+    @Getter private final SortedSet<GraphDatabaseType> selectedDatabases;
+    @Getter private final File resultsPath;
 
     // storage directory
-    private final File dbStorageDirectory;
+    @Getter private final File dbStorageDirectory;
 
     // metrics (optional)
-    private final long csvReportingInterval;
-    private final File csvDir;
-    private final String graphiteHostname;
-    private final long graphiteReportingInterval;
+    @Getter private final long csvReportingInterval; // Titan:  "Time between dumps of CSV files containing Metrics data, in milliseconds"
+    @Getter private final File csvDir; // Titan
+    @Getter private final String graphiteHostname; // Titan
+    @Getter private final long graphiteReportingInterval; // Titan
 
     // storage backend specific settings
-    private final Boolean orientLightweightEdges;
-    private final String sparkseeLicenseKey;
+    @Getter private final Boolean orientLightweightEdges; // Orient
+    @Getter private final String sparkseeLicenseKey;  // Sparksee
 
     // shortest path
-    private final int randomNodes;
+    @Getter private final int randomNodes;
 
     // clustering
-    private final Boolean randomizedClustering;
-    private final Integer nodesCount;
-    private final Integer cacheValuesCount;
-    private final Double cacheIncrementFactor;
-    private final List<Integer> cacheValues;
-    private final File actualCommunities;
-    private final boolean permuteBenchmarks;
-    private final int scenarios;
-    private final int bufferSize;
-    private final int blocksize;
-    private final int pageSize;
+    @Getter private final Boolean randomizedClustering;
+    @Getter private final Integer nodesCount;
+    @Getter private final Integer cacheValuesCount;
+    @Getter private final Double cacheIncrementFactor;
+    @Getter private final List<Integer> cacheValues;
+    @Getter private final File actualCommunities;
+    @Getter private final boolean permuteBenchmarks;
+    @Getter private final int scenarios;
+    @Getter private final int titanBufferSize; // Titan
+    @Getter private final int titanIdsBlocksize; // Titan
+    @Getter private final int titanPageSize; // Titan
+
 
 
     public BenchmarkConfiguration( Configuration appconfig ) {
@@ -122,9 +126,9 @@ public class BenchmarkConfiguration {
         sparkseeLicenseKey = sparksee.containsKey( LICENSE_KEY ) ? sparksee.getString( LICENSE_KEY ) : null;
 
         Configuration titan = socialsensor.subset( TITAN ); //TODO(amcp) move DynamoDB ns into titan
-        bufferSize = titan.getInt( BUFFER_SIZE, GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue() );
-        blocksize = titan.getInt( IDS_BLOCKSIZE, GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue() );
-        pageSize = titan.getInt( PAGE_SIZE, GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue() );
+        titanBufferSize = titan.getInt( BUFFER_SIZE, GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue() );
+        titanIdsBlocksize = titan.getInt( IDS_BLOCKSIZE, GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue() );
+        titanPageSize = titan.getInt( PAGE_SIZE, GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue() );
 
         // database storage directory
         if ( !socialsensor.containsKey( DATABASE_STORAGE_DIRECTORY ) ) {
@@ -217,82 +221,92 @@ public class BenchmarkConfiguration {
     }
 
 
-    public File getDataset() {
-        return dataset;
+    public BenchmarkConfiguration( Map<String, String> settings ) {
+
+        // ---- Static values ----
+        // Database dir
+        dbStorageDirectory = new File( "storage" );
+
+        // Results
+        resultsPath = new File( System.getProperty( "user.dir" ), "results" );
+        if ( !resultsPath.exists() && !resultsPath.mkdirs() ) {
+            throw new IllegalArgumentException( "unable to create results directory" );
+        }
+        if ( !resultsPath.canWrite() ) {
+            throw new IllegalArgumentException( "unable to write to results directory" );
+        }
+
+
+
+        // ---- Settings from Chronos ----
+
+        // Benchmark Types
+        benchmarkTypes = new ArrayList<>();
+        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "benchmark" ) ) );
+
+        // Dataset
+        dataset = validateReadableFile( settings.get( settings.get( "dataset" ) ), DATASET );
+        DatasetFactory.getInstance().getDataset( dataset );
+
+        // benchmark configuration
+        permuteBenchmarks = Boolean.parseBoolean( settings.get( "permuteBenchmark" ) );
+        randomNodes = Integer.parseInt( settings.get( "shortestPathRandomNodes" ) );
+
+        if ( this.benchmarkTypes.contains( BenchmarkType.CLUSTERING ) ) {
+            randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
+            nodesCount = Integer.parseInt( settings.get("nodesCount" ) );
+            actualCommunities = validateReadableFile( settings.get( "actualCommunities" ), ACTUAL_COMMUNITIES );
+
+            final boolean notGenerating = settings.containsKey("cacheValue" );
+            if ( notGenerating ) {
+                cacheValues = new ArrayList<>( 1 );
+                cacheValues.add( Integer.parseInt( settings.get("cacheValue" ) ) );
+                cacheValuesCount = null;
+                cacheIncrementFactor = null;
+            } else if ( settings.containsKey("cacheValuesCount") && settings.containsKey("cacheIncrementFactor") ) {
+                cacheValues = null;
+                cacheValuesCount =  Integer.parseInt( settings.get("cacheValuesCount") );
+                cacheIncrementFactor = Double.parseDouble( settings.get("cacheIncrementFactor") );
+            } else {
+                throw new IllegalArgumentException( "when doing CW benchmark, must provide cache-values or parameters to generate them" );
+            }
+        } else {
+            randomizedClustering = null;
+            nodesCount = null;
+            cacheValuesCount = null;
+            cacheIncrementFactor = null;
+            cacheValues = null;
+            actualCommunities = null;
+        }
+
+        // Database System
+        if ( !GraphDatabaseType.STRING_REP_MAP.keySet().contains( settings.get( "system") ) ) {
+            throw new IllegalArgumentException( String.format( "selected database %s not supported", settings.get( "system") ) );
+        }
+        selectedDatabases = new TreeSet<>();
+        selectedDatabases.add( GraphDatabaseType.STRING_REP_MAP.get( settings.get( "system") ) );
+        scenarios = permuteBenchmarks ? Ints.checkedCast( CombinatoricsUtils.factorial( selectedDatabases.size() ) ) : 1;
+
+        // Metrics
+        this.csvReportingInterval = Long.parseLong( settings.get("titan.csvReportingInterval"));
+        this.csvDir = new File( settings.get( "titan.metrics" ) );
+        this.graphiteHostname = settings.get( "titan.hostname" );
+        this.graphiteReportingInterval = Long.parseLong( settings.get( "titan.reportingInterval" ) );
+
+        // Orient
+        orientLightweightEdges = Boolean.parseBoolean( settings.get( "orient.lightweightEdges" ) );
+
+        // Sparksee
+        sparkseeLicenseKey = settings.get("sparksee.licenseKey");
+
+        // Clustering
+        titanBufferSize = Integer.parseInt( settings.get( "titan.bufferSize" ) );
+        titanIdsBlocksize = Integer.parseInt( settings.get( "titan.blockSize" ) );
+        titanPageSize = Integer.parseInt( settings.get( "titan.pageSize" ) );
     }
 
 
-    public SortedSet<GraphDatabaseType> getSelectedDatabases() {
-        return selectedDatabases;
-    }
-
-
-    public File getDbStorageDirectory() {
-        return dbStorageDirectory;
-    }
-
-
-    public File getResultsPath() {
-        return resultsPath;
-    }
-
-
-    public List<BenchmarkType> getBenchmarkTypes() {
-        return benchmarkTypes;
-    }
-
-
-    public Boolean randomizedClustering() {
-        return randomizedClustering;
-    }
-
-
-    public Integer getNodesCount() {
-        return nodesCount;
-    }
-
-
-    public Integer getCacheValuesCount() {
-        return cacheValuesCount;
-    }
-
-
-    public Double getCacheIncrementFactor() {
-        return cacheIncrementFactor;
-    }
-
-
-    public List<Integer> getCacheValues() {
-        return cacheValues;
-    }
-
-
-    public File getActualCommunitiesFile() {
-        return actualCommunities;
-    }
-
-
-    public Boolean orientLightweightEdges() {
-        return orientLightweightEdges;
-    }
-
-
-    public String getSparkseeLicenseKey() {
-        return sparkseeLicenseKey;
-    }
-
-
-    public boolean permuteBenchmarks() {
-        return permuteBenchmarks;
-    }
-
-
-    public int getScenarios() {
-        return scenarios;
-    }
-
-
-    private static final File validateReadableFile( String fileName, String fileType ) {
+    private static File validateReadableFile( String fileName, String fileType ) {
         File file = new File( fileName );
         if ( !file.exists() ) {
             throw new IllegalArgumentException( String.format( "the %s does not exist", fileType ) );
@@ -304,45 +318,6 @@ public class BenchmarkConfiguration {
         return file;
     }
 
-
-    public int getRandomNodes() {
-        return randomNodes;
-    }
-
-
-    public long getCsvReportingInterval() {
-        return csvReportingInterval;
-    }
-
-
-    public long getGraphiteReportingInterval() {
-        return graphiteReportingInterval;
-    }
-
-
-    public File getCsvDir() {
-        return csvDir;
-    }
-
-
-    public String getGraphiteHostname() {
-        return graphiteHostname;
-    }
-
-
-    public int getTitanBufferSize() {
-        return bufferSize;
-    }
-
-
-    public int getTitanIdsBlocksize() {
-        return blocksize;
-    }
-
-
-    public int getTitanPageSize() {
-        return pageSize;
-    }
 
 
     public boolean publishCsvMetrics() {

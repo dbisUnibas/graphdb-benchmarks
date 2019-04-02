@@ -52,9 +52,9 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     public OrientGraphDatabase( BenchmarkConfiguration config, File dbStorageDirectoryIn ) {
         super( GraphDatabaseType.ORIENT_DB, dbStorageDirectoryIn );
         OGlobalConfiguration.STORAGE_COMPRESSION_METHOD.setValue( "nothing" );
-        this.useLightWeightEdges = config.orientLightweightEdges() == null
+        this.useLightWeightEdges = config.getOrientLightweightEdges() == null
                 ? true
-                : config.orientLightweightEdges();
+                : config.getOrientLightweightEdges();
     }
 
 

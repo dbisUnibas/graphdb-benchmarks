@@ -19,12 +19,7 @@ repositories {
     maven {
         url 'http://dbis-artifactory.dmi.unibas.ch/dbis-internal/'
     }
-
-    // local lib folder
-    //flatDir {
-    //    dirs 'libs'
-    //}
-
+    
     // Maven Central
     mavenCentral()
 
@@ -85,7 +80,7 @@ dependencies {
 	compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
 	
-   // compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0-SNAPSHOT'
+    compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0-SNAPSHOT'
     compile group: 'com.github.rvesse', name: 'airline', version: '2.2.0'
 	
     compile group: 'org.antlr', name: 'antlr-runtime', version:'3.2'

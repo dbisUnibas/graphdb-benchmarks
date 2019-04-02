@@ -41,7 +41,7 @@ public abstract class PermutingBenchmarkBase extends BenchmarkBase {
     public void startBenchmarkInternal() {
         LOG.info( String.format( "Executing %s Benchmark . . . .", type.longname() ) );
 
-        if ( bench.permuteBenchmarks() ) {
+        if ( bench.isPermuteBenchmarks() ) {
             PermutationIterator<GraphDatabaseType> iter = new PermutationIterator<>( bench.getSelectedDatabases() );
             int cntPermutations = 1;
             while ( iter.hasNext() ) {

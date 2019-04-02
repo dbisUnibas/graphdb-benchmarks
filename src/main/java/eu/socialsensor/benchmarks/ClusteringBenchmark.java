@@ -90,13 +90,13 @@ public class ClusteringBenchmark extends BenchmarkBase implements RequiresGraphD
 
             Stopwatch watch = Stopwatch.createUnstarted();
             watch.start();
-            LouvainMethod louvainMethodCache = new LouvainMethod( graphDatabase, cacheSize, bench.randomizedClustering() );
+            LouvainMethod louvainMethodCache = new LouvainMethod( graphDatabase, cacheSize, bench.getRandomizedClustering() );
             louvainMethodCache.computeModularity();
             timeMap.put( cacheSize, watch.elapsed( TimeUnit.MILLISECONDS ) / 1000.0 );
 
             // evaluation with NMI
             Map<Integer, List<Integer>> predictedCommunities = graphDatabase.mapCommunities( louvainMethodCache.getN() );
-            Map<Integer, List<Integer>> actualCommunities = mapNodesToCommunities( Utils.readTabulatedLines( bench.getActualCommunitiesFile(), 4 /* numberOfLinesToSkip */ ) );
+            Map<Integer, List<Integer>> actualCommunities = mapNodesToCommunities( Utils.readTabulatedLines( bench.getActualCommunities(), 4 /* numberOfLinesToSkip */ ) );
             Metrics metrics = new Metrics();
             double NMI = metrics.normalizedMutualInformation( bench.getNodesCount(), actualCommunities, predictedCommunities );
             LOG.info( "NMI value: " + NMI );

@@ -45,27 +45,21 @@ public class GraphDatabaseBenchmark {
     private final BenchmarkConfiguration config;
 
 
-    public static final Configuration getAppconfigFromClasspath() {
-        Configuration appconfig;
+    public static final Configuration getAppConfigFromClasspath() {
+        Configuration appConfig;
         try {
             ClassLoader classLoader = GraphDatabaseBenchmark.class.getClassLoader();
             URL resource = classLoader.getResource( DEFAULT_INPUT_PROPERTIES );
-            appconfig = new PropertiesConfiguration( resource );
+            appConfig = new PropertiesConfiguration( resource );
         } catch ( ConfigurationException e ) {
             throw new IllegalArgumentException( String.format( "Unable to load properties file from classpath because %s", e.getMessage() ) );
         }
-        return appconfig;
+        return appConfig;
     }
 
 
-    public GraphDatabaseBenchmark( String inputPath ) throws IllegalArgumentException {
-        final Configuration appconfig;
-        try {
-            appconfig = inputPath == null ? getAppconfigFromClasspath() : new PropertiesConfiguration( new File( inputPath ) );
-        } catch ( ConfigurationException e ) {
-            throw new IllegalArgumentException( String.format( "Unable to load properties file %s because %s", inputPath, e.getMessage() ) );
-        }
-        config = new BenchmarkConfiguration( appconfig );
+    public GraphDatabaseBenchmark( BenchmarkConfiguration benchmarkConfiguration ) throws IllegalArgumentException {
+        config = benchmarkConfiguration;
         if ( config.publishCsvMetrics() ) {
             final CsvReporter reporter = CsvReporter.forRegistry( metrics )
                     .formatFor( Locale.US )
@@ -131,7 +125,18 @@ public class GraphDatabaseBenchmark {
      */
     public static void main( String[] args ) {
         final String inputPath = args.length != 1 ? null : args[0];
-        GraphDatabaseBenchmark benchmarks = new GraphDatabaseBenchmark( inputPath );
+
+        final Configuration appConfig;
+        try {
+            appConfig =
+                    inputPath == null
+                            ? getAppConfigFromClasspath()
+                            : new PropertiesConfiguration( new File( inputPath ) );
+        } catch ( ConfigurationException e ) {
+            throw new IllegalArgumentException( String.format( "Unable to load properties file %s because %s", inputPath, e.getMessage() ) );
+        }
+
+        GraphDatabaseBenchmark benchmarks = new GraphDatabaseBenchmark( new BenchmarkConfiguration( appConfig ) );
         try {
             benchmarks.run();
         } catch ( Throwable t ) {
