@@ -44,6 +44,8 @@ public class GraphDatabaseBenchmark {
     public static final String DEFAULT_INPUT_PROPERTIES = "META-INF/input.properties";
     private final BenchmarkConfiguration config;
 
+    private final CsvReporter reporter;
+
 
     public static final Configuration getAppConfigFromClasspath() {
         Configuration appConfig;
@@ -61,12 +63,14 @@ public class GraphDatabaseBenchmark {
     public GraphDatabaseBenchmark( BenchmarkConfiguration benchmarkConfiguration ) throws IllegalArgumentException {
         config = benchmarkConfiguration;
         if ( config.publishCsvMetrics() ) {
-            final CsvReporter reporter = CsvReporter.forRegistry( metrics )
+            reporter = CsvReporter.forRegistry( metrics )
                     .formatFor( Locale.US )
                     .convertRatesTo( TimeUnit.SECONDS )
                     .convertDurationsTo( TimeUnit.MILLISECONDS )
                     .build( config.getCsvDir() );
             reporter.start( config.getCsvReportingInterval(), TimeUnit.MILLISECONDS );
+        } else {
+            reporter = null;
         }
         if ( config.publishGraphiteMetrics() ) {
             final Graphite graphite = new Graphite( new InetSocketAddress( config.getGraphiteHostname(), 80 /*port*/ ) );
@@ -85,12 +89,13 @@ public class GraphDatabaseBenchmark {
         for ( BenchmarkType type : config.getBenchmarkTypes() ) {
             runBenchmark( type );
         }
+        stopCsvRecorder();
     }
 
 
     private final void runBenchmark( BenchmarkType type ) {
         final Benchmark benchmark;
-        logger.info( type.longname() + " Benchmark Selected" );
+        logger.info( type.longname() + " benchmark selected" );
         switch ( type ) {
             case MASSIVE_INSERTION:
                 benchmark = new MassiveInsertionBenchmark( config );
@@ -147,12 +152,16 @@ public class GraphDatabaseBenchmark {
     }
 
 
+    public void stopCsvRecorder() {
+        reporter.stop();
+    }
+
+
     public void cleanup() {
         try {
             FileDeleteStrategy.FORCE.delete( config.getDbStorageDirectory() );
         } catch ( IOException e ) {
             logger.fatal( "Unable to clean up db storage directory: " + e.getMessage() );
-            System.exit( 1 );
         }
     }
 }

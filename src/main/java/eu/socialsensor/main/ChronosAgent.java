@@ -9,6 +9,7 @@ import java.io.File;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class ChronosAgent extends AbstractChronosAgent {
 
     @Override
     protected String[] getSupportedSystemNames() {
-        return new String[]{ "graphbenchmarker" };
+        return new String[]{ "5ca44e6f5dcb4" };
     }
 
 
@@ -43,7 +44,7 @@ public class ChronosAgent extends AbstractChronosAgent {
 
         updateProgress( job, 1 );
 
-        final BenchmarkConfiguration configuration = new BenchmarkConfiguration(settings);
+        final BenchmarkConfiguration configuration = new BenchmarkConfiguration(settings, outputDirectory);
 
         updateProgress( job, 5 );
 
@@ -61,23 +62,20 @@ public class ChronosAgent extends AbstractChronosAgent {
     protected Object execute( ChronosJob job, File inputDirectory, File outputDirectory, Properties results, Object prePhaseData ) throws ExecutionException {
         updateProgress( job, 6 );
 
-        GraphDatabaseBenchmark benchmarks = new GraphDatabaseBenchmark( (BenchmarkConfiguration) prePhaseData );
+        GraphDatabaseBenchmark benchmark = new GraphDatabaseBenchmark( (BenchmarkConfiguration) prePhaseData );
         try {
-            benchmarks.run();
+            benchmark.run();
         } catch ( Throwable t ) {
             logger.fatal( t.getMessage() );
         }
 
-        final File runLog = new File( outputDirectory, "run.log" );
-
         updateProgress( job, 90 );
-        return runLog;
+        return benchmark;
     }
 
 
     @Override
     protected Object analyze( ChronosJob job, File inputDirectory, File outputDirectory, Properties results, Object prePhaseData ) throws ExecutionException {
-        final File runLog = (File) prePhaseData;
 
         return prePhaseData == null ? new Object() : prePhaseData;
     }
@@ -86,7 +84,13 @@ public class ChronosAgent extends AbstractChronosAgent {
     @Override
     protected Object clean( ChronosJob job, File inputDirectory, File outputDirectory, Properties results, Object prePhaseData ) throws ExecutionException {
         updateProgress( job, 95 );
-
+        // Sleep one second to give the db system enoch time to stop
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch ( InterruptedException e ) {
+            e.printStackTrace();
+        }
+        ((GraphDatabaseBenchmark) prePhaseData).cleanup();
         updateProgress( job, 100 );
         return prePhaseData == null ? new Object() : prePhaseData;
     }

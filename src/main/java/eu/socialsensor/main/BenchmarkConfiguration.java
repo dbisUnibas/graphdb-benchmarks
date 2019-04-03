@@ -73,10 +73,10 @@ public class BenchmarkConfiguration {
     @Getter private final File dbStorageDirectory;
 
     // metrics (optional)
-    @Getter private final long csvReportingInterval; // Titan:  "Time between dumps of CSV files containing Metrics data, in milliseconds"
-    @Getter private final File csvDir; // Titan
-    @Getter private final String graphiteHostname; // Titan
-    @Getter private final long graphiteReportingInterval; // Titan
+    @Getter private final long csvReportingInterval; // "Time between dumps of CSV files containing Metrics data, in milliseconds"
+    @Getter private final File csvDir;
+    @Getter private final String graphiteHostname;
+    @Getter private final long graphiteReportingInterval;
 
     // storage backend specific settings
     @Getter private final Boolean orientLightweightEdges; // Orient
@@ -221,14 +221,15 @@ public class BenchmarkConfiguration {
     }
 
 
-    public BenchmarkConfiguration( Map<String, String> settings ) {
+    // Chronos
+    public BenchmarkConfiguration( Map<String, String> settings, File outputDirectory ) {
 
         // ---- Static values ----
         // Database dir
         dbStorageDirectory = new File( "storage" );
 
         // Results
-        resultsPath = new File( System.getProperty( "user.dir" ), "results" );
+        resultsPath = new File( outputDirectory, "results" );
         if ( !resultsPath.exists() && !resultsPath.mkdirs() ) {
             throw new IllegalArgumentException( "unable to create results directory" );
         }
@@ -236,21 +237,36 @@ public class BenchmarkConfiguration {
             throw new IllegalArgumentException( "unable to write to results directory" );
         }
 
+        // Csv dir
+        this.csvDir = new File( outputDirectory, "metrics" );
+        if ( !csvDir.exists() && !csvDir.mkdirs() ) {
+            throw new IllegalArgumentException( "unable to create csv directory" );
+        }
+        if ( !csvDir.canWrite() ) {
+            throw new IllegalArgumentException( "unable to write to csv directory" );
+        }
 
+        // permute benchmarks
+        permuteBenchmarks = false;
+
+        this.graphiteHostname = null;
+        this.graphiteReportingInterval = 1000;
+
+        // For FindShortestPath workload, number of nodes for which to calculate shortest path
+        //randomNodes = Integer.parseInt( settings.get( "shortestPathRandomNodes" ) );
+        randomNodes = 100;
 
         // ---- Settings from Chronos ----
 
         // Benchmark Types
         benchmarkTypes = new ArrayList<>();
-        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "benchmark" ) ) );
+        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "insertionWorkload" ) ) );
+        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "queryWorkload" ) ) );
 
         // Dataset
-        dataset = validateReadableFile( settings.get( settings.get( "dataset" ) ), DATASET );
+        dataset = validateReadableFile( "data/" + settings.get( "dataset" ) + ".txt", DATASET );
         DatasetFactory.getInstance().getDataset( dataset );
 
-        // benchmark configuration
-        permuteBenchmarks = Boolean.parseBoolean( settings.get( "permuteBenchmark" ) );
-        randomNodes = Integer.parseInt( settings.get( "shortestPathRandomNodes" ) );
 
         if ( this.benchmarkTypes.contains( BenchmarkType.CLUSTERING ) ) {
             randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
@@ -288,32 +304,29 @@ public class BenchmarkConfiguration {
         scenarios = permuteBenchmarks ? Ints.checkedCast( CombinatoricsUtils.factorial( selectedDatabases.size() ) ) : 1;
 
         // Metrics
-        this.csvReportingInterval = Long.parseLong( settings.get("titan.csvReportingInterval"));
-        this.csvDir = new File( settings.get( "titan.metrics" ) );
-        this.graphiteHostname = settings.get( "titan.hostname" );
-        this.graphiteReportingInterval = Long.parseLong( settings.get( "titan.reportingInterval" ) );
+        this.csvReportingInterval = Long.parseLong( settings.get("csvReportingInterval"));
 
         // Orient
-        orientLightweightEdges = Boolean.parseBoolean( settings.get( "orient.lightweightEdges" ) );
+        orientLightweightEdges = settings.containsKey( "orient.lightweightEdges" ) ? Boolean.parseBoolean( settings.get( "orient.lightweightEdges" ) ) : null;
 
         // Sparksee
-        sparkseeLicenseKey = settings.get("sparksee.licenseKey");
+        sparkseeLicenseKey = settings.getOrDefault( "sparksee.licenseKey", null );
 
-        // Clustering
-        titanBufferSize = Integer.parseInt( settings.get( "titan.bufferSize" ) );
-        titanIdsBlocksize = Integer.parseInt( settings.get( "titan.blockSize" ) );
-        titanPageSize = Integer.parseInt( settings.get( "titan.pageSize" ) );
+        // Titan
+        titanBufferSize = settings.containsKey( "titan.bufferSize" ) ? Integer.parseInt( settings.get( "titan.bufferSize" ) ) : GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue();
+        titanIdsBlocksize = settings.containsKey( "titan.blockSize" ) ? Integer.parseInt( settings.get( "titan.blockSize" ) ) : GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue();
+        titanPageSize = settings.containsKey( "titan.pageSize" ) ? Integer.parseInt( settings.get( "titan.pageSize" ) ) : GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue();
     }
 
 
     private static File validateReadableFile( String fileName, String fileType ) {
         File file = new File( fileName );
         if ( !file.exists() ) {
-            throw new IllegalArgumentException( String.format( "the %s does not exist", fileType ) );
+            throw new IllegalArgumentException( String.format( "the %s does not exist: " + fileName, fileType ) );
         }
 
         if ( !(file.isFile() && file.canRead()) ) {
-            throw new IllegalArgumentException( String.format( "the %s must be a file that this user can read", fileType ) );
+            throw new IllegalArgumentException( String.format( "the %s must be a file that this user can read: " + fileName, fileType ) );
         }
         return file;
     }
