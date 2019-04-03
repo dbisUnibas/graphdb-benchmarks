@@ -2,10 +2,7 @@ package eu.socialsensor.main;
 
 
 import com.codahale.metrics.CsvReporter;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.Graphite;
-import com.codahale.metrics.graphite.GraphiteReporter;
 import eu.socialsensor.benchmarks.Benchmark;
 import eu.socialsensor.benchmarks.ClusteringBenchmark;
 import eu.socialsensor.benchmarks.DeleteGraphBenchmark;
@@ -16,7 +13,6 @@ import eu.socialsensor.benchmarks.MassiveInsertionBenchmark;
 import eu.socialsensor.benchmarks.SingleInsertionBenchmark;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -68,15 +64,6 @@ public class GraphDatabaseBenchmark {
             reporter.start( config.getCsvReportingInterval(), TimeUnit.MILLISECONDS );
         } else {
             reporter = null;
-        }
-        if ( config.publishGraphiteMetrics() ) {
-            final Graphite graphite = new Graphite( new InetSocketAddress( config.getGraphiteHostname(), 80 /*port*/ ) );
-            final GraphiteReporter reporter = GraphiteReporter.forRegistry( metrics )
-                    .convertRatesTo( TimeUnit.SECONDS )
-                    .convertDurationsTo( TimeUnit.MILLISECONDS )
-                    .filter( MetricFilter.ALL )
-                    .build( graphite );
-            reporter.start( config.getGraphiteReportingInterval(), TimeUnit.MILLISECONDS );
         }
     }
 

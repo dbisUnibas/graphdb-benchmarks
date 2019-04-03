@@ -44,7 +44,6 @@ public class BenchmarkConfiguration {
 
     static {
         metricsReporters.add( "csv" );
-        metricsReporters.add( "graphite" );
     }
 
 
@@ -59,8 +58,6 @@ public class BenchmarkConfiguration {
     // metrics (optional)
     @Getter private final long csvReportingInterval; // Time between dumps of CSV files containing Metrics data, in milliseconds
     @Getter private final File csvDir; // Metrics CSV output directory
-    @Getter private final String graphiteHostname; // The hostname to receive Graphite plaintext protocol metric data
-    @Getter private final long graphiteReportingInterval;
 
     // storage backend specific settings
     @Getter private final Boolean orientLightweightEdges; // Orient
@@ -91,10 +88,6 @@ public class BenchmarkConfiguration {
 
         //metrics
         final Configuration metrics = socialsensor.subset( "metrics" );
-
-        final Configuration graphite = metrics.subset( "graphite" );
-        this.graphiteHostname = graphite.getString( "hostname", null );
-        this.graphiteReportingInterval = graphite.getLong( "interval", 1000 /*default 1sec*/ );
 
         final Configuration csv = metrics.subset( "csv" );
         this.csvReportingInterval = metrics.getLong( "interval", 1000 /*ms*/ );
@@ -226,9 +219,6 @@ public class BenchmarkConfiguration {
         // permute benchmarks
         permuteBenchmarks = false;
 
-        this.graphiteHostname = null;
-        this.graphiteReportingInterval = 1000;
-
         // For FindShortestPath workload, number of nodes for which to calculate shortest path
         //randomNodes = Integer.parseInt( settings.get( "shortestPathRandomNodes" ) );
         randomNodes = 100;
@@ -310,8 +300,4 @@ public class BenchmarkConfiguration {
         return csvDir != null;
     }
 
-
-    public boolean publishGraphiteMetrics() {
-        return graphiteHostname != null && !graphiteHostname.isEmpty();
-    }
 }
