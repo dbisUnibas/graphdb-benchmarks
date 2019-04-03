@@ -1,13 +1,12 @@
 package eu.socialsensor.insert;
 
 
+import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
+import eu.socialsensor.main.GraphDatabaseType;
 import java.util.HashMap;
 import java.util.Map;
 import org.neo4j.helpers.collection.MapUtil;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
-
-import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
-import eu.socialsensor.main.GraphDatabaseType;
 
 
 /**

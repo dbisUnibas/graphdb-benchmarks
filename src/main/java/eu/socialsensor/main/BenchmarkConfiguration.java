@@ -1,6 +1,8 @@
 package eu.socialsensor.main;
 
 
+import com.google.common.primitives.Ints;
+import eu.socialsensor.dataset.DatasetFactory;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,16 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import javafx.beans.binding.IntegerBinding;
 import lombok.Getter;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.math3.util.CombinatoricsUtils;
-
-import com.google.common.primitives.Ints;
-import com.thinkaurelius.titan.graphdb.configuration.GraphDatabaseConfiguration;
-
-import eu.socialsensor.dataset.DatasetFactory;
 
 
 /**
@@ -31,17 +26,6 @@ public class BenchmarkConfiguration {
 
     // Sparksee / DEX configuration
     private static final String LICENSE_KEY = "license-key";
-
-    // Titan specific configuration
-    private static final String TITAN = "titan";
-    private static final String BUFFER_SIZE = GraphDatabaseConfiguration.BUFFER_SIZE.getName();
-    private static final String IDS_BLOCKSIZE = GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getName();
-    private static final String PAGE_SIZE = GraphDatabaseConfiguration.PAGE_SIZE.getName();
-    public static final String CSV_INTERVAL = GraphDatabaseConfiguration.METRICS_CSV_INTERVAL.getName();
-    public static final String CSV = GraphDatabaseConfiguration.METRICS_CSV_NS.getName();
-    private static final String CSV_DIR = GraphDatabaseConfiguration.METRICS_CSV_DIR.getName();
-    public static final String GRAPHITE = GraphDatabaseConfiguration.METRICS_GRAPHITE_NS.getName();
-    private static final String GRAPHITE_HOSTNAME = GraphDatabaseConfiguration.GRAPHITE_HOST.getName();
 
     // benchmark configuration
     private static final String DATASET = "dataset";
@@ -59,8 +43,8 @@ public class BenchmarkConfiguration {
 
 
     static {
-        metricsReporters.add( CSV );
-        metricsReporters.add( GRAPHITE );
+        metricsReporters.add( "csv" );
+        metricsReporters.add( "graphite" );
     }
 
 
@@ -73,9 +57,9 @@ public class BenchmarkConfiguration {
     @Getter private final File dbStorageDirectory;
 
     // metrics (optional)
-    @Getter private final long csvReportingInterval; // "Time between dumps of CSV files containing Metrics data, in milliseconds"
-    @Getter private final File csvDir;
-    @Getter private final String graphiteHostname;
+    @Getter private final long csvReportingInterval; // Time between dumps of CSV files containing Metrics data, in milliseconds
+    @Getter private final File csvDir; // Metrics CSV output directory
+    @Getter private final String graphiteHostname; // The hostname to receive Graphite plaintext protocol metric data
     @Getter private final long graphiteReportingInterval;
 
     // storage backend specific settings
@@ -94,9 +78,6 @@ public class BenchmarkConfiguration {
     @Getter private final File actualCommunities;
     @Getter private final boolean permuteBenchmarks;
     @Getter private final int scenarios;
-    @Getter private final int titanBufferSize; // Titan
-    @Getter private final int titanIdsBlocksize; // Titan
-    @Getter private final int titanPageSize; // Titan
 
 
 
@@ -109,15 +90,15 @@ public class BenchmarkConfiguration {
         Configuration socialsensor = eu.subset( "socialsensor" );
 
         //metrics
-        final Configuration metrics = socialsensor.subset( GraphDatabaseConfiguration.METRICS_NS.getName() );
+        final Configuration metrics = socialsensor.subset( "metrics" );
 
-        final Configuration graphite = metrics.subset( GRAPHITE );
-        this.graphiteHostname = graphite.getString( GRAPHITE_HOSTNAME, null );
-        this.graphiteReportingInterval = graphite.getLong( GraphDatabaseConfiguration.GRAPHITE_INTERVAL.getName(), 1000 /*default 1sec*/ );
+        final Configuration graphite = metrics.subset( "graphite" );
+        this.graphiteHostname = graphite.getString( "hostname", null );
+        this.graphiteReportingInterval = graphite.getLong( "interval", 1000 /*default 1sec*/ );
 
-        final Configuration csv = metrics.subset( CSV );
-        this.csvReportingInterval = metrics.getLong( CSV_INTERVAL, 1000 /*ms*/ );
-        this.csvDir = csv.containsKey( CSV_DIR ) ? new File( csv.getString( CSV_DIR, System.getProperty( "user.dir" ) /*default*/ ) ) : null;
+        final Configuration csv = metrics.subset( "csv" );
+        this.csvReportingInterval = metrics.getLong( "interval", 1000 /*ms*/ );
+        this.csvDir = csv.containsKey( "directory" ) ? new File( csv.getString( "directory", System.getProperty( "user.dir" ) /*default*/ ) ) : null;
 
         Configuration orient = socialsensor.subset( "orient" );
         orientLightweightEdges = orient.containsKey( LIGHTWEIGHT_EDGES ) ? orient.getBoolean( LIGHTWEIGHT_EDGES ) : null;
@@ -125,10 +106,6 @@ public class BenchmarkConfiguration {
         Configuration sparksee = socialsensor.subset( "sparksee" );
         sparkseeLicenseKey = sparksee.containsKey( LICENSE_KEY ) ? sparksee.getString( LICENSE_KEY ) : null;
 
-        Configuration titan = socialsensor.subset( TITAN ); //TODO(amcp) move DynamoDB ns into titan
-        titanBufferSize = titan.getInt( BUFFER_SIZE, GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue() );
-        titanIdsBlocksize = titan.getInt( IDS_BLOCKSIZE, GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue() );
-        titanPageSize = titan.getInt( PAGE_SIZE, GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue() );
 
         // database storage directory
         if ( !socialsensor.containsKey( DATABASE_STORAGE_DIRECTORY ) ) {
@@ -312,10 +289,6 @@ public class BenchmarkConfiguration {
         // Sparksee
         sparkseeLicenseKey = settings.getOrDefault( "sparksee.licenseKey", null );
 
-        // Titan
-        titanBufferSize = settings.containsKey( "titan.bufferSize" ) ? Integer.parseInt( settings.get( "titan.bufferSize" ) ) : GraphDatabaseConfiguration.BUFFER_SIZE.getDefaultValue();
-        titanIdsBlocksize = settings.containsKey( "titan.blockSize" ) ? Integer.parseInt( settings.get( "titan.blockSize" ) ) : GraphDatabaseConfiguration.IDS_BLOCK_SIZE.getDefaultValue();
-        titanPageSize = settings.containsKey( "titan.pageSize" ) ? Integer.parseInt( settings.get( "titan.pageSize" ) ) : GraphDatabaseConfiguration.PAGE_SIZE.getDefaultValue();
     }
 
 

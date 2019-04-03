@@ -2,9 +2,7 @@ package eu.socialsensor.main;
 
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -13,11 +11,6 @@ import java.util.Set;
  * @author Alexander Patrikalakis
  */
 public enum GraphDatabaseType {
-    TITAN_BERKELEYDB( "Titan", "berkeleyje", "tbdb" ),
-    TITAN_CASSANDRA( "Titan", "cassandra", "tc" ),
-    TITAN_CASSANDRA_EMBEDDED( "TitanEmbedded", "embeddedcassandra", "tce" ),
-    TITAN_HBASE( "Titan", "hbase", "thb" ),
-    TITAN_PERSISTIT( "TitanEmbedded", "persistit", "tp" ),
     ORIENT_DB( "OrientDB", null, "orient" ),
     NEO4J( "Neo4j", null, "neo4j" ),
     SPARKSEE( "Sparksee", null, "sparksee" );
@@ -27,18 +20,12 @@ public enum GraphDatabaseType {
     private final String shortname;
 
     public static final Map<String, GraphDatabaseType> STRING_REP_MAP = new HashMap<>();
-    public static final Set<GraphDatabaseType> TITAN_FLAVORS = new HashSet<>();
 
 
     static {
         for ( GraphDatabaseType db : values() ) {
             STRING_REP_MAP.put( db.getShortname(), db );
         }
-        TITAN_FLAVORS.add( TITAN_BERKELEYDB );
-        TITAN_FLAVORS.add( TITAN_CASSANDRA );
-        TITAN_FLAVORS.add( TITAN_CASSANDRA_EMBEDDED );
-        TITAN_FLAVORS.add( TITAN_HBASE );
-        TITAN_FLAVORS.add( TITAN_PERSISTIT );
     }
 
 

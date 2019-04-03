@@ -1,6 +1,13 @@
 package eu.socialsensor.utils;
 
 
+import eu.socialsensor.graphdatabases.GraphDatabase;
+import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
+import eu.socialsensor.graphdatabases.OrientGraphDatabase;
+import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
+import eu.socialsensor.main.BenchmarkConfiguration;
+import eu.socialsensor.main.BenchmarkingException;
+import eu.socialsensor.main.GraphDatabaseType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -13,22 +20,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import eu.socialsensor.graphdatabases.GraphDatabase;
-import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
-import eu.socialsensor.graphdatabases.OrientGraphDatabase;
-import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
-import eu.socialsensor.graphdatabases.TitanGraphDatabase;
-import eu.socialsensor.main.BenchmarkConfiguration;
-import eu.socialsensor.main.BenchmarkingException;
-import eu.socialsensor.main.GraphDatabaseType;
 
 
 /**
@@ -159,9 +156,7 @@ public class Utils {
     public static final GraphDatabase<?, ?, ?, ?> createDatabaseInstance( BenchmarkConfiguration config, GraphDatabaseType type ) {
         final GraphDatabase<?, ?, ?, ?> graphDatabase;
         final File dbStorageDirectory = generateStorageDirectory( type, config.getDbStorageDirectory() );
-        if ( GraphDatabaseType.TITAN_FLAVORS.contains( type ) ) {
-            graphDatabase = new TitanGraphDatabase( type, config, dbStorageDirectory );
-        } else if ( GraphDatabaseType.NEO4J == type ) {
+        if ( GraphDatabaseType.NEO4J == type ) {
             graphDatabase = new Neo4jGraphDatabase( dbStorageDirectory );
         } else if ( GraphDatabaseType.ORIENT_DB == type ) {
             graphDatabase = new OrientGraphDatabase( config, dbStorageDirectory );

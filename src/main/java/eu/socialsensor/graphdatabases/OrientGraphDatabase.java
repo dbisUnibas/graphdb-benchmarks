@@ -18,14 +18,12 @@ import com.tinkerpop.blueprints.impls.orient.OrientGraphFactory;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.tinkerpop.blueprints.impls.orient.OrientVertex;
 import com.tinkerpop.blueprints.impls.orient.OrientVertexType;
-
 import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.insert.OrientMassiveInsertion;
 import eu.socialsensor.insert.OrientSingleInsertion;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;

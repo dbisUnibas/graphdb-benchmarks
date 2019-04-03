@@ -4,7 +4,6 @@ package eu.socialsensor.main;
 import ch.unibas.dmi.dbis.chronos.agent.AbstractChronosAgent;
 import ch.unibas.dmi.dbis.chronos.agent.ChronosJob;
 import ch.unibas.dmi.dbis.chronos.agent.ExecutionException;
-import eu.socialsensor.benchmarks.Benchmark;
 import java.io.File;
 import java.net.InetAddress;
 import java.util.Map;

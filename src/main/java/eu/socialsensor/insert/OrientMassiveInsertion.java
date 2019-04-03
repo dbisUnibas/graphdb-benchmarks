@@ -4,7 +4,6 @@ package eu.socialsensor.insert;
 import com.orientechnologies.orient.core.config.OGlobalConfiguration;
 import com.orientechnologies.orient.graph.batch.OGraphBatchInsertBasic;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-
 import eu.socialsensor.main.GraphDatabaseType;
 
 

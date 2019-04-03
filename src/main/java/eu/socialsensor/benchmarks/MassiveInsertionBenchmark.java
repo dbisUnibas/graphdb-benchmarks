@@ -1,18 +1,15 @@
 package eu.socialsensor.benchmarks;
 
 
-import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Stopwatch;
-
 import eu.socialsensor.graphdatabases.GraphDatabase;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkType;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
+import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**

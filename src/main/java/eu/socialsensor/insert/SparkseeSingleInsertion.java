@@ -1,14 +1,12 @@
 package eu.socialsensor.insert;
 
 
-import java.io.File;
-
 import com.sparsity.sparksee.gdb.Graph;
 import com.sparsity.sparksee.gdb.Session;
 import com.sparsity.sparksee.gdb.Value;
-
 import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
 import eu.socialsensor.main.GraphDatabaseType;
+import java.io.File;
 
 
 public class SparkseeSingleInsertion extends InsertionBase<Long> {

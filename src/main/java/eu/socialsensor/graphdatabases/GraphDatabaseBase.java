@@ -1,17 +1,14 @@
 package eu.socialsensor.graphdatabases;
 
 
-import java.io.File;
-import java.util.Set;
-
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.kernel.GraphDatabaseAPI;
-
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-
 import eu.socialsensor.main.GraphDatabaseBenchmark;
 import eu.socialsensor.main.GraphDatabaseType;
+import java.io.File;
+import java.util.Set;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.kernel.GraphDatabaseAPI;
 
 
 @SuppressWarnings("deprecation")

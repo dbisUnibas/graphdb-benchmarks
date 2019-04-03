@@ -1,15 +1,13 @@
 package eu.socialsensor.insert;
 
 
-import java.io.File;
-
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientGraph;
-
 import eu.socialsensor.main.GraphDatabaseType;
+import java.io.File;
 
 
 /**

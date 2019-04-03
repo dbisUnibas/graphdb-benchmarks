@@ -1,6 +1,15 @@
 package eu.socialsensor.benchmarks;
 
 
+import com.google.common.base.Stopwatch;
+import eu.socialsensor.clustering.LouvainMethod;
+import eu.socialsensor.graphdatabases.GraphDatabase;
+import eu.socialsensor.main.BenchmarkConfiguration;
+import eu.socialsensor.main.BenchmarkType;
+import eu.socialsensor.main.BenchmarkingException;
+import eu.socialsensor.main.GraphDatabaseType;
+import eu.socialsensor.utils.Metrics;
+import eu.socialsensor.utils.Utils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,20 +21,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
-import com.google.common.base.Stopwatch;
-
-import eu.socialsensor.clustering.LouvainMethod;
-import eu.socialsensor.graphdatabases.GraphDatabase;
-import eu.socialsensor.main.BenchmarkConfiguration;
-import eu.socialsensor.main.BenchmarkType;
-import eu.socialsensor.main.BenchmarkingException;
-import eu.socialsensor.main.GraphDatabaseType;
-import eu.socialsensor.utils.Metrics;
-import eu.socialsensor.utils.Utils;
+import org.apache.logging.log4j.Logger;
 
 
 /**

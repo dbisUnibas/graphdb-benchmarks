@@ -6,10 +6,8 @@ import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkType;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
-
 import java.io.File;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

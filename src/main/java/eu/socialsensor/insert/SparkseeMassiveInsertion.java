@@ -4,7 +4,6 @@ package eu.socialsensor.insert;
 import com.sparsity.sparksee.gdb.Graph;
 import com.sparsity.sparksee.gdb.Session;
 import com.sparsity.sparksee.gdb.Value;
-
 import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
 import eu.socialsensor.main.GraphDatabaseType;
 

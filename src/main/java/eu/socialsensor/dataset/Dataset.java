@@ -1,16 +1,14 @@
 package eu.socialsensor.dataset;
 
 
+import eu.socialsensor.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.commons.math3.util.MathArrays;
-
-import eu.socialsensor.utils.Utils;
 
 
 /**

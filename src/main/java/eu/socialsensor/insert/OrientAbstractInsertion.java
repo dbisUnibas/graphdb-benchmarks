@@ -21,13 +21,12 @@
 package eu.socialsensor.insert;
 
 
-import org.apache.log4j.Logger;
-
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.tinkerpop.blueprints.TransactionalGraph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.impls.orient.OrientExtendedGraph;
+import org.apache.log4j.Logger;
 
 
 /**

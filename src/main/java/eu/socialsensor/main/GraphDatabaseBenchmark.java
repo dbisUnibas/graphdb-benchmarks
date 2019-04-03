@@ -1,6 +1,11 @@
 package eu.socialsensor.main;
 
 
+import com.codahale.metrics.CsvReporter;
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.graphite.Graphite;
+import com.codahale.metrics.graphite.GraphiteReporter;
 import eu.socialsensor.benchmarks.Benchmark;
 import eu.socialsensor.benchmarks.ClusteringBenchmark;
 import eu.socialsensor.benchmarks.DeleteGraphBenchmark;
@@ -9,26 +14,18 @@ import eu.socialsensor.benchmarks.FindNodesOfAllEdgesBenchmark;
 import eu.socialsensor.benchmarks.FindShortestPathBenchmark;
 import eu.socialsensor.benchmarks.MassiveInsertionBenchmark;
 import eu.socialsensor.benchmarks.SingleInsertionBenchmark;
-
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileDeleteStrategy;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-import com.codahale.metrics.CsvReporter;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.Graphite;
-import com.codahale.metrics.graphite.GraphiteReporter;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**

@@ -1,15 +1,6 @@
 package eu.socialsensor.graphdatabases;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.sparsity.sparksee.algorithms.SinglePairShortestPathBFS;
 import com.sparsity.sparksee.gdb.AttributeKind;
 import com.sparsity.sparksee.gdb.Condition;
@@ -24,7 +15,6 @@ import com.sparsity.sparksee.gdb.Session;
 import com.sparsity.sparksee.gdb.Sparksee;
 import com.sparsity.sparksee.gdb.SparkseeConfig;
 import com.sparsity.sparksee.gdb.Value;
-
 import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.insert.SparkseeMassiveInsertion;
 import eu.socialsensor.insert.SparkseeSingleInsertion;
@@ -32,6 +22,14 @@ import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 /**

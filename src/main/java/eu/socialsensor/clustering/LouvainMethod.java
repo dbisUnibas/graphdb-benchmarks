@@ -1,13 +1,12 @@
 package eu.socialsensor.clustering;
 
 
+import eu.socialsensor.graphdatabases.GraphDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import eu.socialsensor.graphdatabases.GraphDatabase;
 
 
 /**

@@ -1,20 +1,18 @@
 package eu.socialsensor.insert;
 
 
+import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
+import eu.socialsensor.main.BenchmarkingException;
+import eu.socialsensor.main.GraphDatabaseType;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.GraphDatabaseAPI;
-
-import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
-import eu.socialsensor.main.BenchmarkingException;
-import eu.socialsensor.main.GraphDatabaseType;
 
 
 /**

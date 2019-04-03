@@ -1,20 +1,18 @@
 package eu.socialsensor.benchmarks;
 
 
+import eu.socialsensor.main.BenchmarkConfiguration;
+import eu.socialsensor.main.BenchmarkType;
+import eu.socialsensor.main.GraphDatabaseType;
+import eu.socialsensor.utils.Utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.collections4.iterators.PermutationIterator;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
-import eu.socialsensor.main.BenchmarkConfiguration;
-import eu.socialsensor.main.BenchmarkType;
-import eu.socialsensor.main.GraphDatabaseType;
-import eu.socialsensor.utils.Utils;
+import org.apache.logging.log4j.Logger;
 
 
 /**
