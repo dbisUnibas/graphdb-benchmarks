@@ -18,14 +18,17 @@ public class ChronosAgent extends AbstractChronosAgent {
     public static final Logger logger = LogManager.getLogger();
 
 
-    ChronosAgent( InetAddress address, int port, boolean secure, boolean useHostname, String environment ) {
+    public final String[] supports;
+
+    ChronosAgent( InetAddress address, int port, boolean secure, boolean useHostname, String environment, String supports ) {
         super( address, port, secure, useHostname, environment );
+        this.supports = new String[] { supports };
     }
 
 
     @Override
     protected String[] getSupportedSystemNames() {
-        return new String[]{ "5cacacdf660df" };
+        return supports;
     }
 
 

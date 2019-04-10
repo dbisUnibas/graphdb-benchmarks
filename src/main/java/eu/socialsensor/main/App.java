@@ -49,7 +49,11 @@ public class App implements Runnable {
     private int port = 443;
 
     @Option(name = { "-e", "--environment" }, description = "Identifier of the evaluation environment this client runs in.")
-    private String environment = "";
+    private String environment = "default";
+
+    @Required
+    @Option(name = { "-s", "--supports" }, description = "Identifier of the supported system(s) in Chronos.")
+    private String supports = "";
 
 
     public static void main( String[] args ) {
@@ -73,7 +77,7 @@ public class App implements Runnable {
             WORKING_DIR.mkdir();
         }
 
-        AbstractChronosAgent aca = new ChronosAgent( address, port, true, true, environment );
+        AbstractChronosAgent aca = new ChronosAgent( address, port, true, true, environment, supports );
         aca.setDaemon( false );
         aca.start();
     }
