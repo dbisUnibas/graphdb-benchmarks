@@ -13,6 +13,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import lombok.Getter;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.math3.util.CombinatoricsUtils;
 
 
@@ -196,7 +197,7 @@ public class BenchmarkConfiguration {
 
         // ---- Static values ----
         // Database dir
-        dbStorageDirectory = new File( "storage" );
+        dbStorageDirectory = new File( "storage/" + RandomStringUtils.randomAlphabetic(10) );
 
         // Results
         resultsPath = new File( outputDirectory, "results" );
@@ -247,8 +248,8 @@ public class BenchmarkConfiguration {
             benchmarkTypes.add( BenchmarkType.CLUSTERING );
 
             // Dataset
-            dataset = validateReadableFile( "data/data/network1000.dat", DATASET );
-            actualCommunities = validateReadableFile( "data/data/community1000.dat", ACTUAL_COMMUNITIES );
+            dataset = validateReadableFile( "data/network1000.dat", DATASET );
+            actualCommunities = validateReadableFile( "data/community1000.dat", ACTUAL_COMMUNITIES );
 
             randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
             nodesCount = Integer.parseInt( settings.get("nodesCount" ) );

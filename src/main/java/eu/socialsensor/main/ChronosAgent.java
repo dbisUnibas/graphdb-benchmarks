@@ -5,10 +5,13 @@ import ch.unibas.dmi.dbis.chronos.agent.AbstractChronosAgent;
 import ch.unibas.dmi.dbis.chronos.agent.ChronosJob;
 import ch.unibas.dmi.dbis.chronos.agent.ExecutionException;
 import java.io.File;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileDeleteStrategy;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +75,8 @@ public class ChronosAgent extends AbstractChronosAgent {
         }
 
         updateProgress( job, 90 );
-        return benchmark;
+
+        return prePhaseData == null ? new Object() : prePhaseData;
     }
 
 
@@ -92,7 +96,13 @@ public class ChronosAgent extends AbstractChronosAgent {
         } catch ( InterruptedException e ) {
             e.printStackTrace();
         }
-        ((GraphDatabaseBenchmark) prePhaseData).cleanup();
+
+        try {
+            FileDeleteStrategy.FORCE.delete( ((BenchmarkConfiguration) prePhaseData).getDbStorageDirectory() );
+        } catch ( IOException e ) {
+            logger.fatal( "Unable to clean up db storage directory: " + e.getMessage() );
+        }
+
         updateProgress( job, 100 );
         return prePhaseData == null ? new Object() : prePhaseData;
     }
