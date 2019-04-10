@@ -225,41 +225,45 @@ public class BenchmarkConfiguration {
 
         // ---- Settings from Chronos ----
 
-        // Benchmark Types
         benchmarkTypes = new ArrayList<>();
-        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "insertionWorkload" ) ) );
-        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "queryWorkload" ) ) );
+        if (settings.get("type").equals( "real" )) {
+            // Benchmark Types
+            benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "insertionWorkload" ) ) );
+            benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "queryWorkload" ) ) );
 
-        // Dataset
-        dataset = validateReadableFile( "data/" + settings.get( "dataset" ) + ".txt", DATASET );
-        DatasetFactory.getInstance().getDataset( dataset );
+            // Dataset
+            dataset = validateReadableFile( "data/" + settings.get( "dataset" ) + ".txt", DATASET );
+            DatasetFactory.getInstance().getDataset( dataset );
 
-
-        if ( this.benchmarkTypes.contains( BenchmarkType.CLUSTERING ) ) {
-            randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
-            nodesCount = Integer.parseInt( settings.get("nodesCount" ) );
-            actualCommunities = validateReadableFile( settings.get( "actualCommunities" ), ACTUAL_COMMUNITIES );
-
-            final boolean notGenerating = settings.containsKey("cacheValue" );
-            if ( notGenerating ) {
-                cacheValues = new ArrayList<>( 1 );
-                cacheValues.add( Integer.parseInt( settings.get("cacheValue" ) ) );
-                cacheValuesCount = null;
-                cacheIncrementFactor = null;
-            } else if ( settings.containsKey("cacheValuesCount") && settings.containsKey("cacheIncrementFactor") ) {
-                cacheValues = null;
-                cacheValuesCount =  Integer.parseInt( settings.get("cacheValuesCount") );
-                cacheIncrementFactor = Double.parseDouble( settings.get("cacheIncrementFactor") );
-            } else {
-                throw new IllegalArgumentException( "when doing CW benchmark, must provide cache-values or parameters to generate them" );
-            }
-        } else {
             randomizedClustering = null;
             nodesCount = null;
             cacheValuesCount = null;
             cacheIncrementFactor = null;
             cacheValues = null;
             actualCommunities = null;
+
+        } else {
+            // Workload
+            benchmarkTypes.add( BenchmarkType.CLUSTERING );
+
+            // Dataset
+            dataset = validateReadableFile( "data/data/network1000.dat", DATASET );
+            actualCommunities = validateReadableFile( "data/data/community1000.dat", ACTUAL_COMMUNITIES );
+
+            randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
+            nodesCount = Integer.parseInt( settings.get("nodesCount" ) );
+
+            final boolean generateCacheValue = settings.containsKey( "generateCacheValue" ) && Boolean.parseBoolean( settings.get( "generateCacheValue" ) );
+            if ( !generateCacheValue ) {
+                cacheValues = new ArrayList<>( 1 );
+                cacheValues.add( Integer.parseInt( settings.get("cacheValue" ) ) );
+                cacheValuesCount = null;
+                cacheIncrementFactor = null;
+            } else {
+                cacheValues = null;
+                cacheValuesCount =  Integer.parseInt( settings.get("cacheValuesCount") );
+                cacheIncrementFactor = Double.parseDouble( settings.get("cacheIncrementFactor") );
+            }
         }
 
         // Database System
@@ -270,14 +274,14 @@ public class BenchmarkConfiguration {
         selectedDatabases.add( GraphDatabaseType.STRING_REP_MAP.get( settings.get( "system") ) );
         scenarios = permuteBenchmarks ? Ints.checkedCast( CombinatoricsUtils.factorial( selectedDatabases.size() ) ) : 1;
 
-        // Metrics
-        this.csvReportingInterval = Long.parseLong( settings.get("csvReportingInterval"));
-
         // Orient
-        orientLightweightEdges = settings.containsKey( "orient.lightweightEdges" ) ? Boolean.parseBoolean( settings.get( "orient.lightweightEdges" ) ) : null;
+        orientLightweightEdges = settings.containsKey( "orientdb-lightweightEdges" ) ? Boolean.parseBoolean( settings.get( "orientdb.lightweightEdges" ) ) : null;
 
         // Sparksee
         sparkseeLicenseKey = settings.getOrDefault( "sparksee.licenseKey", null );
+
+        // Metrics
+        this.csvReportingInterval = settings.containsKey("csvReportingInterval") ? Long.parseLong( settings.get("csvReportingInterval")) : 1000;
 
     }
 
