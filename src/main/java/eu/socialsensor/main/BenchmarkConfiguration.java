@@ -248,11 +248,12 @@ public class BenchmarkConfiguration {
             benchmarkTypes.add( BenchmarkType.CLUSTERING );
 
             // Dataset
-            dataset = validateReadableFile( "data/network1000.dat", DATASET );
-            actualCommunities = validateReadableFile( "data/community1000.dat", ACTUAL_COMMUNITIES );
+            nodesCount = Integer.parseInt( settings.get("nodesCount" ) );
+            dataset = validateReadableFile( "data/network" + nodesCount + ".dat", DATASET );
+            actualCommunities = validateReadableFile( "data/community" + nodesCount + ".dat", ACTUAL_COMMUNITIES );
+            DatasetFactory.getInstance().getDataset( dataset );
 
             randomizedClustering = Boolean.parseBoolean( settings.get("randomizeClustering" ) );
-            nodesCount = Integer.parseInt( settings.get("nodesCount" ) );
 
             final boolean generateCacheValue = settings.containsKey( "generateCacheValue" ) && Boolean.parseBoolean( settings.get( "generateCacheValue" ) );
             if ( !generateCacheValue ) {
