@@ -13,7 +13,8 @@ import java.util.Map;
 public enum GraphDatabaseType {
     ORIENT_DB( "OrientDB", null, "orient" ),
     NEO4J( "Neo4j", null, "neo4j" ),
-    SPARKSEE( "Sparksee", null, "sparksee" );
+    SPARKSEE("Sparksee", null, "sparksee"),
+    HYPERGRAPH_DB("HyperGraphDB", null, "hgdb");
 
     private final String backend;
     private final String api;
