@@ -91,7 +91,7 @@ dependencies {
     compile group: 'com.github.rvesse', name: 'airline', version: '2.2.0'
 	
     compile group: 'org.antlr', name: 'antlr-runtime', version:'3.2'
-    compile group: 'com.google.guava', name: 'guava', version:'14.0.1'
+    compile group: 'com.google.guava', name: 'guava', version:'20.0'
     compile group: 'colt', name: 'colt', version:'1.2.0'
     compile group: 'commons-codec', name: 'commons-codec', version:'1.7'
     compile group: 'org.apache.commons', name: 'commons-collections4', version:'4.0'
