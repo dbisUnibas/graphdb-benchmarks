@@ -1,31 +1,23 @@
 package eu.socialsensor.utils;
 
 
-import eu.socialsensor.graphdatabases.GraphDatabase;
-import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
-import eu.socialsensor.graphdatabases.OrientGraphDatabase;
-import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
+import eu.socialsensor.graphdatabases.*;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.util.MathArrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
 
 
 /**
@@ -162,6 +154,8 @@ public class Utils {
             graphDatabase = new OrientGraphDatabase( config, dbStorageDirectory );
         } else if ( GraphDatabaseType.SPARKSEE == type ) {
             graphDatabase = new SparkseeGraphDatabase( config, dbStorageDirectory );
+        } else if ( GraphDatabaseType.HYPERGRAPH_DB == type ) {
+            graphDatabase = new HyperGraphDatabase( config, dbStorageDirectory );
         } else {
             // For safety, will handle the null case
             throw new IllegalArgumentException( "Unknown type: " + type == null ? "null" : type.toString() );

@@ -1,9 +1,8 @@
 package eu.socialsensor.graphdatabases;
 
 
+import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.GraphDatabaseType;
-import org.hypergraphdb.storage.HGStoreImplementation;
-import org.hypergraphdb.util.HGUtils;
 
 import java.io.File;
 import java.util.List;
@@ -17,13 +16,13 @@ import java.util.Set;
  */
 public class HyperGraphDatabase extends GraphDatabaseBase<Iterable<Object>, Iterable<Object>, Object, Object> {
 
-    protected HyperGraphDatabase(File dbStorageDirectory) {
+    public HyperGraphDatabase(BenchmarkConfiguration config, File dbStorageDirectory) {
         super(GraphDatabaseType.HYPERGRAPH_DB, dbStorageDirectory);
     }
 
     @Override
     public Object getOtherVertexFromEdge(Object r, Object oneVertex) {
-        HGUtils.getImplementationOf(HGStoreImplementation.)
+       // HGUtils.getImplementationOf(HGStoreImplementation.)
 
     return null;
     }
