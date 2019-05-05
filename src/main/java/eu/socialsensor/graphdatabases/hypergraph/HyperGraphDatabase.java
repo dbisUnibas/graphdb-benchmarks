@@ -107,7 +107,7 @@ public class HyperGraphDatabase
       (
           Integer nodeId
       ) {
-    throw new NotImplementedException();
+    return graph.getOne( NodeQueries.queryById(nodeId));
   }
 
   @Override
@@ -119,12 +119,15 @@ public class HyperGraphDatabase
   }
 
   @Override
-  public Iterator<HGRel>
-  getNeighborsOfVertex
-      (
+  public Iterator<HGRel> getNeighborsOfVertex(
           Node v
-      ) {
-    throw new NotImplementedException();
+  ) {
+    return graph.<HGRel>getAll(
+            RelTypeSimilar.getAllNeighbors(
+                graph,
+                graph.getHandle(v)
+            )
+        ).iterator();
   }
 
   @Override
@@ -152,9 +155,8 @@ public class HyperGraphDatabase
   }
 
   @Override
-  public Iterable<Node> getVertexIterator
-      (
-      ) {
+  public Iterable<Node> getVertexIterator(
+  ) {
     return  graph.getAll(NodeQueries.nodeType());
   }
 

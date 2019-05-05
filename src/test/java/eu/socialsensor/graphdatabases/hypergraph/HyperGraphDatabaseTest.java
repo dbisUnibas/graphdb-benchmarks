@@ -54,28 +54,35 @@ public class HyperGraphDatabaseTest {
         graph.getNodeCount(), 5);
 
     Iterator<HGRel> it = graph.getAllEdges();
-    HyperGraph graph = HGEnvironment.get(databaseDir.getAbsolutePath());
-    List<String> resultRelationships = new ArrayList<>();
-    while (it.hasNext()) {
-      HGRel t = it.next();
-      Node n0 = graph.get(t.getTargetAt(0));
-      Node n1 = graph.get(t.getTargetAt(1));
-      resultRelationships.add(n0.getId() + " -> " + n1.getId());
-    }
-    graph.close();
+    List<String> resultRelationships = asString(it);
 
     Assert.assertEquals("Should contain same relationships",
         CollectionUtils.getCardinalityMap(resultRelationships),
-        CollectionUtils.getCardinalityMap(getExpectedRelationships()));
+        CollectionUtils.getCardinalityMap(getExpectedRelationships(FilterType.ALL)));
   }
 
-  private List<String> getExpectedRelationships() {
+  private enum FilterType {
+    ALL,
+    NEIGHBORS_OF_1
+  }
+  private List<String> getExpectedRelationships(FilterType type) {
+
     List<String> expectedRelationships = new ArrayList<>();
-    expectedRelationships.add("0 -> 1");
-    expectedRelationships.add("1 -> 2");
-    expectedRelationships.add("2 -> 3");
-    expectedRelationships.add("3 -> 4");
-    expectedRelationships.add("1 -> 4");
+    switch (type){
+      case ALL:
+        expectedRelationships.add("0 -> 1");
+        expectedRelationships.add("1 -> 2");
+        expectedRelationships.add("2 -> 3");
+        expectedRelationships.add("3 -> 4");
+        expectedRelationships.add("1 -> 4");
+        break;
+      case NEIGHBORS_OF_1:
+        expectedRelationships.add("0 -> 1");
+        expectedRelationships.add("1 -> 2");
+        expectedRelationships.add("1 -> 4");
+        break;
+
+    }
     return expectedRelationships;
   }
 
@@ -122,7 +129,30 @@ public class HyperGraphDatabaseTest {
   }
 
   @Test
-  public void getNeighborsOfVertex() {
+  public void getNeighborsOfVertex() throws IOException {
+    cleaDBSetup(true);
+
+    Iterator<HGRel> it = graph.getNeighborsOfVertex(graph.getVertex(1));
+    List<String> resultNeighborRelationships = asString(it);
+
+    Assert.assertEquals("Should retrieve all neighbor relationships of a vertex",
+        CollectionUtils.getCardinalityMap(resultNeighborRelationships),
+        CollectionUtils.getCardinalityMap(getExpectedRelationships(FilterType.NEIGHBORS_OF_1))
+        );
+  }
+
+  private List<String> asString(Iterator<HGRel> it){
+    List<String> resultRelationships = new ArrayList<>();
+    HyperGraph graph = HGEnvironment.get(databaseDir.getAbsolutePath());
+    while (it.hasNext()) {
+      HGRel t = it.next();
+      Node n0 = graph.get(t.getTargetAt(0));
+      Node n1 = graph.get(t.getTargetAt(1));
+
+      resultRelationships.add(n0.getId() + " -> " + n1.getId());
+    }
+    graph.close();
+    return resultRelationships;
   }
 
   @Test

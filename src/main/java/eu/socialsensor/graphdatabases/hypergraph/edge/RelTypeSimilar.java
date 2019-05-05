@@ -4,6 +4,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRelType;
+import org.hypergraphdb.query.HGQueryCondition;
 
 public class RelTypeSimilar {
 
@@ -18,6 +19,14 @@ public class RelTypeSimilar {
         )
     );
   }
+
+  public static HGQueryCondition getAllNeighbors(HyperGraph graph, HGHandle atom) {
+    return hg.and(
+            hg.type(getHGRelType(graph)),
+           hg.incident(atom)
+        );
+  }
+
 
   public static void addTo(HyperGraph graph) {
     graph.add(similarRelType);
