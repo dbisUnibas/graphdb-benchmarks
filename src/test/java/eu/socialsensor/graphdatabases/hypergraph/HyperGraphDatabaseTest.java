@@ -8,6 +8,7 @@ import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -78,6 +79,10 @@ public class HyperGraphDatabaseTest {
     return expectedRelationships;
   }
 
+  private List<Integer> getExpectedNodeIds(){
+    return  Arrays.asList(0, 1, 2, 3, 4);
+  }
+
   @Test
   public void createDatabaseForMassiveMode() throws IOException {
     this.cleaDBSetup(false);
@@ -94,5 +99,173 @@ public class HyperGraphDatabaseTest {
   public void initCommunityProperty() throws IOException {
     this.cleaDBSetup(true);
     graph.initCommunityProperty();
+  }
+
+  @Test
+  public void getOtherVertexFromEdge() {
+  }
+
+  @Test
+  public void getSrcVertexFromEdge() {
+  }
+
+  @Test
+  public void getDestVertexFromEdge() {
+  }
+
+  @Test
+  public void getVertex() {
+  }
+
+  @Test
+  public void getAllEdges() {
+  }
+
+  @Test
+  public void getNeighborsOfVertex() {
+  }
+
+  @Test
+  public void edgeIteratorHasNext() {
+  }
+
+  @Test
+  public void nextEdge() {
+  }
+
+  @Test
+  public void cleanupEdgeIterator() {
+  }
+
+  @Test
+  public void getVertexIterator() throws IOException {
+    cleaDBSetup(true);
+    List<Integer> nodeId = new ArrayList<>();
+    graph.getVertexIterator().forEach(n -> nodeId.add(n.getId()));
+
+    Assert.assertEquals("Should retrieve all node ids",
+        5,
+        nodeId.size()
+    );
+
+    Assert.assertEquals("Should match node ids",
+        CollectionUtils.getCardinalityMap(getExpectedNodeIds()),
+        CollectionUtils.getCardinalityMap(nodeId));
+  }
+
+  @Test
+  public void vertexIteratorHasNext() {
+  }
+
+  @Test
+  public void nextVertex() {
+  }
+
+  @Test
+  public void cleanupVertexIterator() {
+  }
+
+  @Test
+  public void open() {
+  }
+
+  @Test
+  public void createGraphForSingleLoad() {
+  }
+
+  @Test
+  public void massiveModeLoading() {
+  }
+
+  @Test
+  public void singleModeLoading() {
+  }
+
+  @Test
+  public void createGraphForMassiveLoad() {
+  }
+
+  @Test
+  public void shutdown() {
+  }
+
+  @Test
+  public void delete() {
+  }
+
+  @Test
+  public void shutdownMassiveGraph() {
+  }
+
+  @Test
+  public void shortestPath() {
+  }
+
+  @Test
+  public void getNodeCount() {
+  }
+
+  @Test
+  public void getNeighborsIds() {
+  }
+
+  @Test
+  public void getNodeWeight() {
+  }
+
+  @Test
+  public void getCommunitiesConnectedToNodeCommunities() {
+  }
+
+  @Test
+  public void getNodesFromCommunity() {
+  }
+
+  @Test
+  public void getNodesFromNodeCommunity() {
+  }
+
+  @Test
+  public void getEdgesInsideCommunity() {
+  }
+
+  @Test
+  public void getCommunityWeight() {
+  }
+
+  @Test
+  public void getNodeCommunityWeight() {
+  }
+
+  @Test
+  public void moveNode() {
+  }
+
+  @Test
+  public void getGraphWeightSum() {
+  }
+
+  @Test
+  public void reInitializeCommunities() {
+  }
+
+  @Test
+  public void getCommunityFromNode() {
+  }
+
+  @Test
+  public void getCommunity() {
+  }
+
+  @Test
+  public void getCommunitySize() {
+  }
+
+  @Test
+  public void mapCommunities() {
+  }
+
+  @Test
+  public void nodeExists() {
   }
 }

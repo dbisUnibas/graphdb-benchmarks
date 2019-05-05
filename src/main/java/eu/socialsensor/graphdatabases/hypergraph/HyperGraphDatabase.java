@@ -30,17 +30,35 @@ import java.util.stream.Collectors;
  *
  * @author Fabrizio Parrillo
  */
-public class HyperGraphDatabase extends
-    GraphDatabaseBase<Iterable<Node>, Iterator<HGRel>, Node, HGRel> {
+public class HyperGraphDatabase
+    extends
+    GraphDatabaseBase
+        <
+        Iterable<Node>,
+        Iterator<HGRel>,
+        Node,
+        HGRel
+        >
+{
 
   protected HyperGraph graph = null;
 
-  public HyperGraphDatabase(BenchmarkConfiguration config, File dbStorageDirectory) {
-    super(GraphDatabaseType.HYPERGRAPH_DB, dbStorageDirectory);
+  public HyperGraphDatabase(
+      BenchmarkConfiguration config,
+      File dbStorageDirectory
+  ) {
+    super(
+        GraphDatabaseType.HYPERGRAPH_DB,
+        dbStorageDirectory
+    );
   }
 
-  private static List<HGHandle> extractShortestPath(Map<HGHandle, HGHandle> predecessorMap,
-      HGHandle start, HGHandle goal) {
+  private static List<HGHandle> extractShortestPath(
+      Map<HGHandle, HGHandle> predecessorMap,
+      HGHandle start,
+      HGHandle goal
+  ) {
+
     List<HGHandle> shortestPath = new LinkedList<HGHandle>();
     HGHandle currentPredecessor = goal;
     while (currentPredecessor != start) {
@@ -61,54 +79,83 @@ public class HyperGraphDatabase extends
 
     }*/
   @Override
-  public Node getOtherVertexFromEdge(HGRel r, Node oneVertex) {
+  public Node getOtherVertexFromEdge(
+      HGRel r,
+      Node oneVertex
+  ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Node getSrcVertexFromEdge(HGRel edge) {
+  public Node getSrcVertexFromEdge
+      (
+          HGRel edge
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Node getDestVertexFromEdge(HGRel edge) {
+  public Node getDestVertexFromEdge
+      (
+          HGRel edge
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Node getVertex(Integer nodeId) {
+  public Node getVertex
+      (
+          Integer nodeId
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Iterator<HGRel> getAllEdges() {
+  public Iterator<HGRel> getAllEdges
+      (
+      ) {
     HGHandle areSimilar = RelTypeSimilar.getHGRelType(graph);
     return graph.<HGRel>getAll(hg.and(hg.type(areSimilar))).iterator();
   }
 
   @Override
-  public Iterator<HGRel> getNeighborsOfVertex(Node v) {
+  public Iterator<HGRel>
+  getNeighborsOfVertex
+      (
+          Node v
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public boolean edgeIteratorHasNext(Iterator<HGRel> it) {
+  public boolean edgeIteratorHasNext
+      (
+          Iterator<HGRel> it
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public HGRel nextEdge(Iterator<HGRel> it) {
+  public HGRel nextEdge
+      (
+          Iterator<HGRel> it
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public void cleanupEdgeIterator(Iterator<HGRel> it) {
+  public void cleanupEdgeIterator
+      (
+          Iterator<HGRel> it
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Iterable<Node> getVertexIterator() {
-    throw new NotImplementedException();
+  public Iterable<Node> getVertexIterator
+      (
+      ) {
+    return  graph.getAll(NodeQueries.nodeType());
   }
 
 /*    @Override
@@ -125,22 +172,32 @@ public class HyperGraphDatabase extends
         */
 
   @Override
-  public boolean vertexIteratorHasNext(Iterable<Node> it) {
+  public boolean vertexIteratorHasNext
+      (
+          Iterable<Node> it
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public Node nextVertex(Iterable<Node> it) {
+  public Node nextVertex(
+      Iterable<Node> it
+  ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public void cleanupVertexIterator(Iterable<Node> it) {
+  public void cleanupVertexIterator
+      (
+          Iterable<Node> it
+      ) {
     throw new NotImplementedException();
   }
 
   @Override
-  public void open() {
+  public void open
+      (
+      ) {
     createHyperGraphDB();
   }
 
