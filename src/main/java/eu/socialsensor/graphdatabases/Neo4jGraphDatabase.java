@@ -8,27 +8,9 @@ import eu.socialsensor.insert.Neo4jSingleInsertion;
 import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ResourceIterable;
-import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.helpers.collection.IteratorUtil;
@@ -38,6 +20,10 @@ import org.neo4j.kernel.Traversal;
 import org.neo4j.tooling.GlobalGraphOperations;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
+
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -123,9 +109,9 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
 
     @Override
-    public void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber ) {
+    public void singleModeLoading( File dataset, File resultsPath, int scenarioNumber ) {
         Insertion neo4jSingleInsertion = new Neo4jSingleInsertion( this.neo4jGraph, resultsPath );
-        neo4jSingleInsertion.createGraph( dataPath, scenarioNumber );
+        neo4jSingleInsertion.createGraph( dataset, scenarioNumber );
     }
 
 

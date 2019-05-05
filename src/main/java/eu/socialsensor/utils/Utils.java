@@ -2,6 +2,7 @@ package eu.socialsensor.utils;
 
 
 import eu.socialsensor.graphdatabases.*;
+import eu.socialsensor.graphdatabases.hypergraph.HyperGraphDatabase;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
