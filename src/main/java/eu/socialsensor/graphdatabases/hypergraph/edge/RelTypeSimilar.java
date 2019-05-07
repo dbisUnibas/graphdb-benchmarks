@@ -27,6 +27,20 @@ public class RelTypeSimilar {
         );
   }
 
+  public static HGQueryCondition getAllOutgoingNeighbors(HyperGraph graph, HGHandle atom) {
+    return hg.and(
+        hg.type(getHGRelType(graph)),
+        hg.incidentAt(atom, 0)
+    );
+
+  }
+
+  public static HGQueryCondition getAllIngoingNeighbors(HyperGraph graph, HGHandle atom) {
+    return hg.and(
+        hg.type(getHGRelType(graph)),
+        hg.incidentAt(atom, 1)
+    );
+  }
 
   public static void addTo(HyperGraph graph) {
     graph.add(similarRelType);

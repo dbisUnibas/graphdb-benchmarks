@@ -5,6 +5,7 @@ import eu.socialsensor.graphdatabases.GraphDatabaseBase;
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
+import eu.socialsensor.insert.HyperGraphMassiveInsertion;
 import eu.socialsensor.insert.HyperGraphdataSingleInsertion;
 import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.main.BenchmarkConfiguration;
@@ -34,12 +35,11 @@ public class HyperGraphDatabase
     extends
     GraphDatabaseBase
         <
-        Iterable<Node>,
-        Iterator<HGRel>,
-        Node,
-        HGRel
-        >
-{
+            Iterator<Node>,
+            Iterator<HGRel>,
+            Node,
+            HGRel
+            > {
 
   protected HyperGraph graph = null;
 
@@ -83,15 +83,20 @@ public class HyperGraphDatabase
       HGRel r,
       Node oneVertex
   ) {
-    throw new NotImplementedException();
+    for (HGHandle hgHandle : r) {
+      Node n = graph.get(hgHandle);
+      if (!n.equals(oneVertex)) {
+        return n;
+      }
+    }
+    return null;
   }
 
   @Override
-  public Node getSrcVertexFromEdge
-      (
-          HGRel edge
-      ) {
-    throw new NotImplementedException();
+  public Node getSrcVertexFromEdge(
+      HGRel edge
+  ) {
+    return graph.get(edge.getTargetAt(0));
   }
 
   @Override
@@ -99,7 +104,7 @@ public class HyperGraphDatabase
       (
           HGRel edge
       ) {
-    throw new NotImplementedException();
+    return graph.get(edge.getTargetAt(1));
   }
 
   @Override
@@ -107,27 +112,25 @@ public class HyperGraphDatabase
       (
           Integer nodeId
       ) {
-    return graph.getOne( NodeQueries.queryById(nodeId));
+    return graph.getOne(NodeQueries.queryById(nodeId));
   }
 
   @Override
-  public Iterator<HGRel> getAllEdges
-      (
-      ) {
+  public Iterator<HGRel> getAllEdges() {
     HGHandle areSimilar = RelTypeSimilar.getHGRelType(graph);
     return graph.<HGRel>getAll(hg.and(hg.type(areSimilar))).iterator();
   }
 
   @Override
   public Iterator<HGRel> getNeighborsOfVertex(
-          Node v
+      Node v
   ) {
     return graph.<HGRel>getAll(
-            RelTypeSimilar.getAllNeighbors(
-                graph,
-                graph.getHandle(v)
-            )
-        ).iterator();
+        RelTypeSimilar.getAllNeighbors(
+            graph,
+            graph.getHandle(v)
+        )
+    ).iterator();
   }
 
   @Override
@@ -135,7 +138,7 @@ public class HyperGraphDatabase
       (
           Iterator<HGRel> it
       ) {
-    throw new NotImplementedException();
+    return it.hasNext();
   }
 
   @Override
@@ -143,7 +146,7 @@ public class HyperGraphDatabase
       (
           Iterator<HGRel> it
       ) {
-    throw new NotImplementedException();
+    return it.next();
   }
 
   @Override
@@ -151,13 +154,12 @@ public class HyperGraphDatabase
       (
           Iterator<HGRel> it
       ) {
-    throw new NotImplementedException();
   }
 
   @Override
-  public Iterable<Node> getVertexIterator(
+  public Iterator<Node> getVertexIterator(
   ) {
-    return  graph.getAll(NodeQueries.nodeType());
+    return graph.<Node>getAll(NodeQueries.nodeType()).iterator();
   }
 
 /*    @Override
@@ -174,32 +176,28 @@ public class HyperGraphDatabase
         */
 
   @Override
-  public boolean vertexIteratorHasNext
-      (
-          Iterable<Node> it
-      ) {
-    throw new NotImplementedException();
+  public boolean vertexIteratorHasNext(
+      Iterator<Node> it
+  ) {
+    return it.hasNext();
   }
 
   @Override
   public Node nextVertex(
-      Iterable<Node> it
+      Iterator<Node> it
   ) {
-    throw new NotImplementedException();
+    return it.next();
   }
 
   @Override
   public void cleanupVertexIterator
       (
-          Iterable<Node> it
+          Iterator<Node> it
       ) {
-    throw new NotImplementedException();
   }
 
   @Override
-  public void open
-      (
-      ) {
+  public void open() {
     createHyperGraphDB();
   }
 
@@ -211,7 +209,8 @@ public class HyperGraphDatabase
 
   @Override
   public void massiveModeLoading(File dataPath) {
-    throw new NotImplementedException();
+    Insertion insertion = new HyperGraphMassiveInsertion(graph);
+    insertion.createGraph(dataPath, 0);
   }
 
   @Override
@@ -276,7 +275,20 @@ public class HyperGraphDatabase
 
   @Override
   public Set<Integer> getNeighborsIds(int nodeId) {
-    throw new NotImplementedException();
+    List<HGRel> neighbors = graph.getAll(
+        RelTypeSimilar.getAllOutgoingNeighbors(
+            graph,
+            graph.findOne(NodeQueries.queryById(nodeId)
+            )
+        )
+    );
+
+    return neighbors
+        .stream()
+        .map(rel -> rel.getTargetAt(1))
+        .map(graph::<Node>get)
+        .map(Node::getId)
+        .collect(Collectors.toSet());
   }
 
   @Override

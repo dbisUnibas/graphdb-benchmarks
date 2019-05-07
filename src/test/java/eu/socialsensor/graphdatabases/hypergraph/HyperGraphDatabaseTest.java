@@ -4,11 +4,13 @@ package eu.socialsensor.graphdatabases.hypergraph;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import com.google.common.collect.Sets;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,9 +18,14 @@ import org.apache.commons.io.FileUtils;
 import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRel;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HyperGraphDatabaseTest {
 
   private File databaseDir = new File(this.getClass().getResource("/").getPath(), "data");
@@ -27,26 +34,25 @@ public class HyperGraphDatabaseTest {
 
   private HyperGraphDatabase graph = null;
 
-  private void cleaDBSetup(boolean isSingleMode) throws IOException {
-    FileUtils.deleteDirectory(databaseDir);
-    FileUtils.deleteDirectory(resultDir);
+  @Before
+  public void cleaDBSetup() throws IOException, InterruptedException {
 
     FileUtils.forceMkdir(databaseDir);
     FileUtils.forceMkdir(resultDir);
 
     graph = new HyperGraphDatabase(null, databaseDir);
     graph.open();
-    if (isSingleMode) {
       graph.createGraphForSingleLoad();
       graph.singleModeLoading(testData, resultDir, 0);
-    } else {
-      graph.massiveModeLoading(testData);
-    }
   }
 
+  @After
+  public void clean() throws IOException {
+    FileUtils.deleteDirectory(databaseDir);
+    FileUtils.deleteDirectory(resultDir);
+  }
   @Test
   public void createDatabaseForSingleMode() throws IOException {
-    this.cleaDBSetup(true);
     Assert.assertTrue("Should create a database file",
         new File(databaseDir, "00000000.jdb").exists()
     );
@@ -92,24 +98,30 @@ public class HyperGraphDatabaseTest {
 
   @Test
   public void createDatabaseForMassiveMode() throws IOException {
-    this.cleaDBSetup(false);
     assertTrue(new File(databaseDir, "00000000.jdb").exists());
-    assertEquals(graph.getNodeCount(), 4);
+    assertEquals(graph.getNodeCount(), 5);
   }
 
   @Test
   public void testSingleModeLoading() throws IOException {
-    this.cleaDBSetup(true);
   }
 
   @Test
   public void initCommunityProperty() throws IOException {
-    this.cleaDBSetup(true);
     graph.initCommunityProperty();
   }
 
   @Test
-  public void getOtherVertexFromEdge() {
+  public void getOtherVertexFromEdge() throws IOException {
+    Node node0  = graph.getVertex(0);
+    Node node1  = graph.getVertex(1);
+    HGRel rel = graph.getNeighborsOfVertex(node0).next();
+
+    Node resutlNode = graph.getOtherVertexFromEdge(rel, node0);
+    Assert.assertEquals("Should return the other node in the relationship",
+        resutlNode,
+        node1
+        );
   }
 
   @Test
@@ -130,8 +142,6 @@ public class HyperGraphDatabaseTest {
 
   @Test
   public void getNeighborsOfVertex() throws IOException {
-    cleaDBSetup(true);
-
     Iterator<HGRel> it = graph.getNeighborsOfVertex(graph.getVertex(1));
     List<String> resultNeighborRelationships = asString(it);
 
@@ -160,18 +170,12 @@ public class HyperGraphDatabaseTest {
   }
 
   @Test
-  public void nextEdge() {
-  }
-
-  @Test
   public void cleanupEdgeIterator() {
   }
 
   @Test
   public void getVertexIterator() throws IOException {
-    cleaDBSetup(true);
     List<Integer> nodeId = new ArrayList<>();
-    graph.getVertexIterator().forEach(n -> nodeId.add(n.getId()));
 
     Assert.assertEquals("Should retrieve all node ids",
         5,
@@ -181,14 +185,6 @@ public class HyperGraphDatabaseTest {
     Assert.assertEquals("Should match node ids",
         CollectionUtils.getCardinalityMap(getExpectedNodeIds()),
         CollectionUtils.getCardinalityMap(nodeId));
-  }
-
-  @Test
-  public void vertexIteratorHasNext() {
-  }
-
-  @Test
-  public void nextVertex() {
   }
 
   @Test
@@ -237,6 +233,18 @@ public class HyperGraphDatabaseTest {
 
   @Test
   public void getNeighborsIds() {
+    Assert.assertEquals("With node who has just outgoing nodes",
+        Sets.newHashSet(Arrays.asList(1)),
+        graph.getNeighborsIds(0)
+        );
+    Assert.assertEquals("With node who has in and outgoing nodes",
+        Sets.newHashSet(Arrays.asList(2, 4)),
+        graph.getNeighborsIds(1)
+    );
+    Assert.assertEquals("With node who has no outgoing nodes",
+        new HashSet<Integer>(),
+        graph.getNeighborsIds(4)
+    );
   }
 
   @Test

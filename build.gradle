@@ -158,3 +158,6 @@ javadoc {
 }
 
 
+tasks.withType(Test)  {
+    maxParallelForks = 1
+}

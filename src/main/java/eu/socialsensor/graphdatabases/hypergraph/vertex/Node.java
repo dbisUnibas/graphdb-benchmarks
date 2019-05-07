@@ -1,5 +1,6 @@
 package eu.socialsensor.graphdatabases.hypergraph.vertex;
 
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,4 +27,22 @@ public class Node {
     this.nodeCommunity = nodeCommunity;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Node node = (Node) o;
+    return id == node.id &&
+        community == node.community &&
+        nodeCommunity == node.nodeCommunity;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, community, nodeCommunity);
+  }
 }
