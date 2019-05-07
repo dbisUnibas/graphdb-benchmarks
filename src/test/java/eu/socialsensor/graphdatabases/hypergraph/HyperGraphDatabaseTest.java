@@ -6,16 +6,21 @@ import static org.testng.Assert.assertTrue;
 
 import com.google.common.collect.Sets;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
+import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.hypergraphdb.HGEnvironment;
+import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRel;
 import org.junit.After;
@@ -299,8 +304,42 @@ public class HyperGraphDatabaseTest {
   public void getCommunitySize() {
   }
 
+  private void setCommunities(){
+    HyperGraph graph = HGEnvironment.get(databaseDir.getAbsolutePath());
+    List<Node> allN = graph.getAll(NodeQueries.nodeType());
+    for(Node n : allN){
+      HGHandle handle = graph.getHandle(n);
+      if (n.getId() < 3) n.setCommunity(1);
+      else n.setCommunity(2);
+      graph.replace(handle, n);
+    }
+  }
   @Test
   public void mapCommunities() {
+    Map<Integer, List<Integer>> expected = new HashMap<>();
+    expected.put(0, Arrays.asList(0, 1, 2, 3, 4));
+    expected.put(1, Arrays.asList());
+    Map<Integer, List<Integer>> result = graph.mapCommunities(2);
+
+    Collections.sort(result.get(0));
+    Assert.assertEquals("Should all be in community 0",
+        expected,
+        result
+        );
+    setCommunities();
+
+    expected.clear();
+    expected.put(0, Arrays.asList());
+    expected.put(1, Arrays.asList(0, 1, 2));
+    expected.put(2, Arrays.asList(3, 4));
+    Map<Integer, List<Integer>> result2 = graph.mapCommunities(3);
+    Collections.sort(result2.get(0));
+    Collections.sort(result2.get(1));
+    Collections.sort(result2.get(2));
+    Assert.assertEquals("Should all be in community 1 and 2",
+        expected,
+        result2
+    );
   }
 
   @Test

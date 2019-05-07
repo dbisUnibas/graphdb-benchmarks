@@ -58,7 +58,6 @@ public class HyperGraphDatabase
       HGHandle start,
       HGHandle goal
   ) {
-
     List<HGHandle> shortestPath = new LinkedList<HGHandle>();
     HGHandle currentPredecessor = goal;
     while (currentPredecessor != start) {
@@ -68,16 +67,6 @@ public class HyperGraphDatabase
     return shortestPath;
   }
 
-  /**
-   * List<HGHandle> HGHandles = graph.getAll(similarNeighborOfNode);
-   * <p>
-   * Iterator<HGHandle> neighbors = HGHandles.stream() // The node might occur in multiple hyper
-   * edges, // but we are only interested in the outgoing edges // with respect to the link
-   * condition (Node we are looking at). .filter(link -> link.getTargetAt(0).equals(v))
-   * .findFirst().get().iterator();
-   **//*
-
-    }*/
   @Override
   public Node getOtherVertexFromEdge(
       HGRel r,
@@ -134,31 +123,27 @@ public class HyperGraphDatabase
   }
 
   @Override
-  public boolean edgeIteratorHasNext
-      (
+  public boolean edgeIteratorHasNext(
           Iterator<HGRel> it
       ) {
     return it.hasNext();
   }
 
   @Override
-  public HGRel nextEdge
-      (
+  public HGRel nextEdge(
           Iterator<HGRel> it
       ) {
     return it.next();
   }
 
   @Override
-  public void cleanupEdgeIterator
-      (
+  public void cleanupEdgeIterator(
           Iterator<HGRel> it
       ) {
   }
 
   @Override
-  public Iterator<Node> getVertexIterator(
-  ) {
+  public Iterator<Node> getVertexIterator() {
     return graph.<Node>getAll(NodeQueries.nodeType()).iterator();
   }
 
@@ -190,8 +175,7 @@ public class HyperGraphDatabase
   }
 
   @Override
-  public void cleanupVertexIterator
-      (
+  public void cleanupVertexIterator(
           Iterator<Node> it
       ) {
   }
@@ -388,7 +372,16 @@ public class HyperGraphDatabase
 
   @Override
   public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
-    throw new NotImplementedException();
+    Map<Integer, List<Integer>> communities = new HashMap<>();
+    for ( int i = 0; i < numberOfCommunities; i++ ) {
+      List<Node> nodesIter = graph.getAll(NodeQueries.queryByCommunity(i));
+      List<Integer> nodes = new ArrayList<>();
+      for ( Node n : nodesIter ) {
+            nodes.add(n.getId());
+          }
+          communities.put( i, nodes );
+        }
+    return communities;
   }
 
   @Override
