@@ -1,6 +1,7 @@
 package eu.socialsensor.graphdatabases.hypergraph;
 
 
+import com.google.common.collect.Iterables;
 import eu.socialsensor.graphdatabases.GraphDatabaseBase;
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
@@ -11,7 +12,17 @@ import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
-import org.apache.commons.lang.NotImplementedException;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.hypergraphdb.HGConfiguration;
 import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
@@ -21,10 +32,7 @@ import org.hypergraphdb.algorithms.DefaultALGenerator;
 import org.hypergraphdb.algorithms.GraphClassics;
 import org.hypergraphdb.algorithms.HGALGenerator;
 import org.hypergraphdb.atom.HGRel;
-
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import org.hypergraphdb.query.HGQueryCondition;
 
 /**
  * Hyper Graph  database implementation
@@ -115,7 +123,7 @@ public class HyperGraphDatabase
       Node v
   ) {
     return graph.<HGRel>getAll(
-        RelTypeSimilar.getAllNeighbors(
+        RelTypeSimilar.getAllInAndOutNeighbors(
             graph,
             graph.getHandle(v)
         )
@@ -205,7 +213,8 @@ public class HyperGraphDatabase
 
   @Override
   public void createGraphForMassiveLoad() {
-    throw new NotImplementedException();
+    createHyperGraphDB();
+    createSchema();
   }
 
   @Override
@@ -277,8 +286,9 @@ public class HyperGraphDatabase
 
   @Override
   public double getNodeWeight(int nodeId) {
-    hg.getOne(graph, NodeQueries.queryById(nodeId));
-    return 0;
+      HGHandle         node              =  graph.getOne(NodeQueries.queryById(nodeId));
+      HGQueryCondition inAndOutNeighbors = RelTypeSimilar.getAllInAndOutNeighbors(graph, node);
+      return graph.getAll(inAndOutNeighbors).size();
   }
 
   @Override
@@ -295,7 +305,16 @@ public class HyperGraphDatabase
 
   @Override
   public Set<Integer> getCommunitiesConnectedToNodeCommunities(int nodeCommunities) {
-    throw new NotImplementedException();
+    Set<Integer> communities = new HashSet<>();
+    List<HGHandle> handle = graph.findAll(NodeQueries.queryByCommunity(nodeCommunities));
+        for ( HGHandle h : handle ) {
+          List<HGRel> rels = graph.getAll(RelTypeSimilar.getAllOutgoingNeighbors(graph, h));
+          for ( HGRel r : rels) {
+            Node neighbour = graph.get(r.getTargetAt(1));
+            communities.add( neighbour.getCommunity());
+          }
+        }
+    return communities;
   }
 
   @Override
@@ -314,27 +333,48 @@ public class HyperGraphDatabase
 
   @Override
   public double getEdgesInsideCommunity(int nodeCommunity, int communityNodes) {
-    throw new NotImplementedException();
+    double edges = 0;
+    List<HGHandle> nodes = graph.findAll(NodeQueries.queryByNodeCommunity(nodeCommunity));
+    List<HGHandle> comNodes = graph.findAll( NodeQueries.queryByCommunity(communityNodes) );
+    for ( HGHandle node : nodes ) {
+      for ( HGRel rel : graph.<HGRel>getAll(RelTypeSimilar.getAllOutgoingNeighbors(graph, node))) {
+        if ( Iterables.contains( comNodes, rel.getTargetAt(1) ) ) {
+          edges++;
+        }
+      }
+    }
+    return edges;
   }
 
   @Override
   public double getCommunityWeight(int community) {
-    throw new NotImplementedException();
+    return getNodeCommunityWeight(community); // ToDo remove duplicated method from interface
   }
 
   @Override
   public double getNodeCommunityWeight(int nodeCommunity) {
-    throw new NotImplementedException();
+    double nodeCommunityWeight = 0;
+        List<HGHandle> iter = graph.findAll(NodeQueries.queryByCommunity(nodeCommunity));
+          for ( HGHandle n : iter ) {
+            HGQueryCondition outgoingNeighbors = RelTypeSimilar.getAllOutgoingNeighbors(graph, n);
+            nodeCommunityWeight += graph.findAll(outgoingNeighbors).size();
+          }
+    return nodeCommunityWeight;
   }
 
   @Override
   public void moveNode(int from, int to) {
-    throw new NotImplementedException();
+    Iterable<HGHandle> fromIter = graph.findAll(NodeQueries.queryByNodeCommunity(from));
+    for ( HGHandle handle : fromIter ) {
+      Node n = graph.get(handle);
+      n.setCommunity(to);
+      graph.replace(handle, n);
+    }
   }
 
   @Override
   public double getGraphWeightSum() {
-    return 0;
+    return Collections.singletonList(getAllEdges()).size();
   }
 
   @Override

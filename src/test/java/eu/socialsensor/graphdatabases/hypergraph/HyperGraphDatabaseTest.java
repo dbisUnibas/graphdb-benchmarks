@@ -47,7 +47,7 @@ public class HyperGraphDatabaseTest {
 
     graph = new HyperGraphDatabase(null, databaseDir);
     graph.open();
-      graph.createGraphForSingleLoad();
+      graph.createGraphForMassiveLoad();
       graph.singleModeLoading(testData, resultDir, 0);
   }
 

@@ -20,7 +20,7 @@ public class RelTypeSimilar {
     );
   }
 
-  public static HGQueryCondition getAllNeighbors(HyperGraph graph, HGHandle atom) {
+  public static HGQueryCondition getAllInAndOutNeighbors(HyperGraph graph, HGHandle atom) {
     return hg.and(
             hg.type(getHGRelType(graph)),
            hg.incident(atom)
