@@ -1,10 +1,7 @@
 package eu.socialsensor.utils;
 
 
-import eu.socialsensor.graphdatabases.GraphDatabase;
-import eu.socialsensor.graphdatabases.Neo4jGraphDatabase;
-import eu.socialsensor.graphdatabases.OrientGraphDatabase;
-import eu.socialsensor.graphdatabases.SparkseeGraphDatabase;
+import eu.socialsensor.graphdatabases.*;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
@@ -161,7 +158,9 @@ public class Utils {
         } else if ( GraphDatabaseType.ORIENT_DB == type ) {
             graphDatabase = new OrientGraphDatabase( config, dbStorageDirectory );
         } else if ( GraphDatabaseType.SPARKSEE == type ) {
-            graphDatabase = new SparkseeGraphDatabase( config, dbStorageDirectory );
+            graphDatabase = new SparkseeGraphDatabase(config, dbStorageDirectory);
+        } else if ( GraphDatabaseType.TINKERPOP_NEO4J == type ) {
+            graphDatabase = new TinkerPopNeo4j(config, dbStorageDirectory);
         } else {
             // For safety, will handle the null case
             throw new IllegalArgumentException( "Unknown type: " + type == null ? "null" : type.toString() );

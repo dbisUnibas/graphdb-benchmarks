@@ -13,7 +13,9 @@ import java.util.Map;
 public enum GraphDatabaseType {
     ORIENT_DB( "OrientDB", null, "orient" ),
     NEO4J( "Neo4j", null, "neo4j" ),
-    SPARKSEE( "Sparksee", null, "sparksee" );
+    SPARKSEE( "Sparksee", null, "sparksee" ),
+    TINKERPOP_NEO4J("gremlin-neo4j", null, "tinkerpop neo4j"),
+    TINKERPOP_TINKERGRAPH("gremlin-tinkergraph", null, "tinkerpop tinkergraph");
 
     private final String backend;
     private final String api;
