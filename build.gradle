@@ -41,7 +41,7 @@ version = '1.0'
 
 description = "Graph DB Benchmarking Client"
 
-mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark"
+mainClassName = "eu.socialsensor.main.App"
 
 
 compileJava.options.encoding = 'UTF-8'
