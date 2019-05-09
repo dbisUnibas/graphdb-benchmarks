@@ -105,10 +105,9 @@ dependencies {
     compile group: 'com.sleepycat', name: 'je', version:'5.0.73'
     compile group: 'net.java.dev.jna', name: 'jna', version:'4.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-core', version:'3.6.2'
-    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'2.1.8'
-    compile group: 'org.neo4j', name: 'neo4j', version:'2.1.8'
+    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'3.5.4'
+    compile group: 'org.neo4j', name: 'neo4j', version:'3.5.4'
 //    implementation 'org.neo4j:neo4j-tinkerpop-api-impl:0.9-3.4.0'  // 3.4.0 breaks earlier neo4j stuff in this benchmark... 2.1.8 doesn't find socialsensor.main anymore...
-    compile(group: 'com.tinkerpop.blueprints', name: 'blueprints-neo4j2-graph', version:'2.6.0') { exclude(module: 'logback-classic') }
     compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version:'2.2.5'
     compile group: 'com.tinkerpop', name: 'pipes', version:'2.6.0'
     compile group: 'org.iq80.snappy', name: 'snappy', version:'0.3'
