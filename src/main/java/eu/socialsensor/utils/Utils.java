@@ -161,6 +161,8 @@ public class Utils {
             graphDatabase = new SparkseeGraphDatabase(config, dbStorageDirectory);
         } else if ( GraphDatabaseType.TINKERPOP_NEO4J == type ) {
             graphDatabase = new TinkerPopNeo4j(config, dbStorageDirectory);
+        } else if (GraphDatabaseType.TINKERPOP_TINKERGRAPH == type) {
+            graphDatabase = new TinkerPopTinkerGraph(config, dbStorageDirectory);
         } else {
             // For safety, will handle the null case
             throw new IllegalArgumentException( "Unknown type: " + type == null ? "null" : type.toString() );
