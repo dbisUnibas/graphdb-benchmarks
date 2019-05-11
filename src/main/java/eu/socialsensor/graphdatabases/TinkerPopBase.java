@@ -11,7 +11,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.io.File;
 import java.util.*;
 
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.has;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
 public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, Iterator<Edge>, Vertex, Edge> {
     Graph graph;
@@ -109,5 +109,36 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
             neighborIds.add((Integer) v.property(NODE_ID).value());
         }
         return neighborIds;
+    }
+
+    @Override
+    public void shortestPath(Vertex fromNode, Integer node) {
+        // the following assumes that the first path found is the shortest.
+        graph.traversal().V(fromNode).repeat(out().simplePath()).until(
+                hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, node)).path().limit(1).iterate();
+        // todo: test
+    }
+
+    @Override
+    public double getNodeWeight(int nodeId) {
+        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                .has(NODE_ID, nodeId).outE().count().next(); //todo test
+    }
+
+    @Override
+    public void cleanupEdgeIterator(Iterator<Edge> it) {
+        //NOOP
+    }
+
+    @Override
+    public void cleanupVertexIterator(Iterator<Vertex> it) {
+        //NOOP
+    }
+
+    @Override
+    public boolean nodeExists(int nodeId) {
+        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId).hasNext();
+        //todo test
+
     }
 }

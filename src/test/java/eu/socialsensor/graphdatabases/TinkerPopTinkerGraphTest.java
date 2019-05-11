@@ -162,13 +162,44 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getNodeWeight() {
-        //todo
-        fail();
+        Vertex v1 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v1.property(GraphDatabaseBase.NODE_ID, 1);
+        Vertex v2 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v2.property(GraphDatabaseBase.NODE_ID, 2);
+        Vertex v3 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v3.property(GraphDatabaseBase.NODE_ID, 3);
+        Vertex v4 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v4.property(GraphDatabaseBase.NODE_ID, 4);
+
+        Edge e1 = v1.addEdge("label", v2);
+        Edge e2 = v1.addEdge("label", v3);
+        Edge e3 = v3.addEdge("label", v1);
+        Edge e4 = v3.addEdge("label", v1);
+        assertEquals(2, (int) db.getNodeWeight(1));
+        assertEquals(0, (int) db.getNodeWeight(2));
+        assertEquals(2, (int) db.getNodeWeight(3));
+        assertEquals(0, (int) db.getNodeWeight(4));
+
     }
 
     @Test
     public void nodeExists() {
-        //todo
-        fail();
+        Vertex v1 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v1.property(GraphDatabaseBase.NODE_ID, 1);
+        Vertex v2 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v2.property(GraphDatabaseBase.NODE_ID, 2);
+        Vertex v3 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v3.property(GraphDatabaseBase.NODE_ID, 3);
+        Vertex v4 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        assertFalse(db.nodeExists(4));
+        v4.property(GraphDatabaseBase.NODE_ID, 4);
+        assertTrue(db.nodeExists(1));
+        assertTrue(db.nodeExists(2));
+        assertTrue(db.nodeExists(3));
+        assertTrue(db.nodeExists(4));
+        assertFalse(db.nodeExists(5));
+        assertFalse(db.nodeExists(0));
+        assertFalse(db.nodeExists(-1));
+
     }
 }

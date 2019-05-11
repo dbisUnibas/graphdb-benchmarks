@@ -30,16 +30,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
 
 
     @Override
-    public void cleanupEdgeIterator(Iterator<Edge> it) {
-        //NOOP
-    }
-
-    @Override
-    public void cleanupVertexIterator(Iterator<Vertex> it) {
-        //NOOP
-    }
-
-    @Override
     public void open() {
         Configuration conf = new BaseConfiguration();
         conf.addProperty(TinkerGraph.GREMLIN_TINKERGRAPH_GRAPH_LOCATION,
@@ -97,20 +87,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     @Override
     public void shutdownMassiveGraph() {
         shutdown();
-    }
-
-    @Override
-    public void shortestPath(Vertex fromNode, Integer node) {
-        // the following assumes that the first path found is the shortest.
-        System.out.println(graph.traversal().V(fromNode).repeat(out().simplePath()).until(
-                hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, node)).path().limit(1).iterate());
-        // todo: test
-    }
-
-    @Override
-    public double getNodeWeight(int nodeId) {
-        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
-                .has(NODE_ID, nodeId).outE().count().next(); //todo test
     }
 
     @Override
@@ -203,13 +179,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
         throw new RuntimeException("mapCommunities not implemented");
 //        return null;        //todo
-
-    }
-
-    @Override
-    public boolean nodeExists(int nodeId) {
-        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId).hasNext();
-        //todo test
 
     }
 }

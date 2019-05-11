@@ -24,13 +24,12 @@ public abstract class TinkerPopSingleInsertionBase extends InsertionBase<Vertex>
         return myGraph.traversal().V().has(NODE_LABEL, GraphDatabaseBase.NODE_ID, value).fold().coalesce(
                 unfold(),
                 addV(NODE_LABEL).property(GraphDatabaseBase.NODE_ID, value)).next();
-
     }
 
     @Override
     protected void relateNodes(Vertex src, Vertex dest) {
-        // although we don't need the created edge, we need to use .next() to actually perform the traversal and
+        // although we don't need the created edge, we need to use .iterate() to actually perform the traversal and
         // thus create the edge
-        myGraph.traversal().V(src).addE(GraphDatabaseBase.SIMILAR).to(dest).next();
+        myGraph.traversal().V(src).addE(GraphDatabaseBase.SIMILAR).to(dest).iterate();
     }
 }
