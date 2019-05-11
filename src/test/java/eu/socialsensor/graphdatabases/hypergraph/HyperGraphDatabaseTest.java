@@ -1,9 +1,6 @@
 package eu.socialsensor.graphdatabases.hypergraph;
 
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-
 import com.google.common.collect.Sets;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
@@ -103,8 +100,8 @@ public class HyperGraphDatabaseTest {
 
   @Test
   public void createDatabaseForMassiveMode() throws IOException {
-    assertTrue(new File(databaseDir, "00000000.jdb").exists());
-    assertEquals(graph.getNodeCount(), 5);
+    Assert.assertTrue(new File(databaseDir, "00000000.jdb").exists());
+    Assert.assertEquals(graph.getNodeCount(), 5);
   }
 
   @Test
