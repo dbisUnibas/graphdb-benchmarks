@@ -8,6 +8,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,21 +18,27 @@ import static org.junit.Assert.*;
 
 public class TinkerPopTinkerGraphTest {
     TinkerPopTinkerGraph db;
-    TinkerPopSingleInsertionTinkerGraph ins;
 
     @Before
     public void setUp() throws Exception {
         Configuration conf = new BaseConfiguration();
-        conf.addProperty("eu.socialsensor.database-storage-directory", ".");
-        conf.addProperty("eu.socialsensor.dataset", "Email-Enron.txt");
+        conf.addProperty("eu.socialsensor.database-storage-directory", "databasedata");
+        conf.addProperty("eu.socialsensor.dataset", "data/Email-Enron.txt");
         conf.addProperty("eu.socialsensor.permute-benchmarks", false);
         conf.addProperty("eu.socialsensor.results-path", "testresults");
         BenchmarkConfiguration config = new BenchmarkConfiguration(conf);
         db = new TinkerPopTinkerGraph(config, config.getDbStorageDirectory());
+        db.open();
     }
+
+    @After
+    public void tearDown() throws Exception {
+        db.shutdown();
+        db.delete();
+    }
+
     @Test
     public void getNodeCount() {
-        db.open();
         assertEquals(0, db.getNodeCount());
         db.graph.addVertex("test");
         assertEquals(1, db.getNodeCount());
@@ -40,7 +47,6 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getVertexIterator() {
-        db.open();
         assertEquals(0, db.getNodeCount());
         db.graph.addVertex("test1");
         db.graph.addVertex("test2");
@@ -49,26 +55,9 @@ public class TinkerPopTinkerGraphTest {
 
     }
 
-    @Test
-    public void open() {
-        db.open();
-    }
-
-    @Test
-    public void shutdown() {
-        db.open();
-        db.shutdown();
-    }
-
-    @Test
-    public void delete() {
-        db.open();
-        db.shutdown();
-    }
 
     @Test
     public void getOtherVertexFromEdge() {
-        db.open();
         Vertex v1 = db.graph.addVertex("test1");
         Vertex v2 = db.graph.addVertex("test2");
         Vertex v3 = db.graph.addVertex("test3");
@@ -90,7 +79,6 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getSrcVertexFromEdge() {
-        db.open();
         Vertex v1 = db.graph.addVertex("test1");
         Vertex v2 = db.graph.addVertex("test2");
         Vertex v3 = db.graph.addVertex("test3");
@@ -107,7 +95,6 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getDestVertexFromEdge() {
-        db.open();
         Vertex v1 = db.graph.addVertex("test1");
         Vertex v2 = db.graph.addVertex("test2");
         Vertex v3 = db.graph.addVertex("test3");
@@ -123,7 +110,6 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getVertex() {
-        db.open();
         Vertex v1 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
         v1.property(GraphDatabaseBase.NODE_ID, 1);
         Vertex v2 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
@@ -145,7 +131,6 @@ public class TinkerPopTinkerGraphTest {
 
     @Test
     public void getNeighborsIds() {
-        db.open();
         Vertex v1 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
         v1.property(GraphDatabaseBase.NODE_ID, 1);
         Vertex v2 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);

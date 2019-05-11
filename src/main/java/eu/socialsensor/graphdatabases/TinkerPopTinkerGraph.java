@@ -1,9 +1,14 @@
 package eu.socialsensor.graphdatabases;
 
+import eu.socialsensor.insert.TinkerPopMassiveInsertionTinkerGraph;
 import eu.socialsensor.insert.TinkerPopSingleInsertionBase;
 import eu.socialsensor.insert.TinkerPopSingleInsertionTinkerGraph;
 import eu.socialsensor.main.BenchmarkConfiguration;
+import eu.socialsensor.main.BenchmarkingException;
 import eu.socialsensor.main.GraphDatabaseType;
+import eu.socialsensor.utils.Utils;
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
@@ -18,11 +23,9 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.hasLab
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.out;
 
 public class TinkerPopTinkerGraph extends TinkerPopBase {
-    private BenchmarkConfiguration config;
 
     public TinkerPopTinkerGraph(BenchmarkConfiguration config, File dbStorageDirectory) {
         super(GraphDatabaseType.TINKERPOP_TINKERGRAPH, dbStorageDirectory);
-        this.config = config;
     }
 
 
@@ -38,18 +41,27 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
 
     @Override
     public void open() {
-        this.graph = TinkerGraph.open();
+        Configuration conf = new BaseConfiguration();
+        conf.addProperty(TinkerGraph.GREMLIN_TINKERGRAPH_GRAPH_LOCATION,
+                new File(dbStorageDirectory, "tinkerGraph.gryo").toString());
+        conf.addProperty(TinkerGraph.GREMLIN_TINKERGRAPH_GRAPH_FORMAT, "gryo"); // we need to persist to be able
+        this.graph = TinkerGraph.open(conf); // to use data from insertion in later benchmarks
     }
 
     @Override
     public void createGraphForSingleLoad() {
-        graph = TinkerGraph.open();
-        // todo: think about possible configuration options (indexes...) supported by tinkergraph???
+        // delete before starting, otherwise this benchmark makes no sense, as data will already be loaded.
+        // apparently framework doesn't do this? huh?
+        delete();
+        open();
+        ((TinkerGraph) graph).createIndex(NODE_ID, Vertex.class); // index is essential for insert speed!
     }
 
     @Override
     public void massiveModeLoading(File dataPath) {
-        throw new RuntimeException("massiveModeLoading not implemented");
+        TinkerPopMassiveInsertionTinkerGraph ins = new TinkerPopMassiveInsertionTinkerGraph(this.graph, null);
+        ins.createGraph(dataPath, 0); //what's with these parameters?? NEO4j impl sets them 0/null...
+
     }
 
     @Override
@@ -60,26 +72,31 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
 
     @Override
     public void createGraphForMassiveLoad() {
-        graph = TinkerGraph.open();
-        // todo: think about possible configuration options (indexes...) supported by tinkergraph???
+        // delete before starting, otherwise this benchmark makes no sense, as data will already be loaded.
+        // apparently framework doesn't do this? huh?
+        delete();
+        open();
+        ((TinkerGraph) graph).createIndex(NODE_ID, Vertex.class); // index is essential for insert speed!
     }
 
     @Override
-    public void shutdown() {
-        // don't do anything (inMemory db...). If we call close() here and have a GREMLIN_TINKERGRAPH_GRAPH_LOCATION
-        // set, we would persist the graph on disk. as for now, we don't want this
+    public void shutdown() { // persist DB
+        try {
+            graph.close();
+        } catch (Exception e) {
+            throw new BenchmarkingException(String.format("Can't close TinkerGraph! %s", e.getMessage()));
+        }
     }
 
     @Override
     public void delete() {
-        // unless GREMLIN_TINKERGRAPH_GRAPH_LOCATION was set and a close() call was made, there is nothing to delete
-        // this is desired (bench only). therefore we don't do anything here...
-
+        System.out.println("Deleting DB");
+        Utils.deleteRecursively(dbStorageDirectory);
     }
 
     @Override
     public void shutdownMassiveGraph() {
-        // noop as well (see above)
+        shutdown();
     }
 
     @Override
