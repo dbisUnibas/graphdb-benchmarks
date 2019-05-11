@@ -1,0 +1,13 @@
+{
+  "interfaceType"    : "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
+  "localDB": "/tmp/hgdbpeertest",
+  "peerName"    : "HGDBPeer",
+  "interfaceConfig"        :
+  {
+    "user" : "admin",
+    "password" : "admin",
+    "serverUrl"    : "127.0.0.1",
+    "room" : "room1@conference.localhost",
+    "autoRegister" : true
+  }
+}
