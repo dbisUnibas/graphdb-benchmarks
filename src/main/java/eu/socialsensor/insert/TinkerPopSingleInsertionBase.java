@@ -13,17 +13,23 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.unfold
 public abstract class TinkerPopSingleInsertionBase extends InsertionBase<Vertex> {
     private Graph myGraph;
     public static final String NODE_LABEL = "Node";
+    boolean supportsTransactions;
 
     TinkerPopSingleInsertionBase(Graph graph, GraphDatabaseType type, File resultsPath) {
         super(type, resultsPath);
         myGraph = graph;
+        supportsTransactions = myGraph.features().graph().supportsTransactions();
     }
 
     @Override
     protected Vertex getOrCreate(String value) {
-        return myGraph.traversal().V().has(NODE_LABEL, GraphDatabaseBase.NODE_ID, value).fold().coalesce(
+        Vertex v = myGraph.traversal().V().has(NODE_LABEL, GraphDatabaseBase.NODE_ID, value).fold().coalesce(
                 unfold(),
                 addV(NODE_LABEL).property(GraphDatabaseBase.NODE_ID, value)).next();
+        if (supportsTransactions) {
+            myGraph.tx().commit();
+        }
+        return v;
     }
 
     @Override
@@ -31,5 +37,7 @@ public abstract class TinkerPopSingleInsertionBase extends InsertionBase<Vertex>
         // although we don't need the created edge, we need to use .iterate() to actually perform the traversal and
         // thus create the edge
         myGraph.traversal().V(src).addE(GraphDatabaseBase.SIMILAR).to(dest).iterate();
-    }
+        if (supportsTransactions) {
+            myGraph.tx().commit();
+        }    }
 }

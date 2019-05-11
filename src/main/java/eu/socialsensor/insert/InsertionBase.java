@@ -106,6 +106,7 @@ public abstract class InsertionBase<T> implements Insertion {
             if ( i % 1000 == 0 ) {
                 insertionTimes.add( (double) thousandWatch.elapsed( TimeUnit.MILLISECONDS ) );
                 thousandWatch.stop();
+                logger.info(String.format("Processed line %d", i));
                 thousandWatch = Stopwatch.createUnstarted();
                 thousandWatch.start();
             }

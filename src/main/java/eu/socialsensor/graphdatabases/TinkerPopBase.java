@@ -15,11 +15,24 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
 public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, Iterator<Edge>, Vertex, Edge> {
     Graph graph;
+    private int numEdgeIterators = 0; //to track wheter it is safe to commit
+    private int numVertexIterators = 0;
 
     public TinkerPopBase(GraphDatabaseType type, File dbStorageDirectory) {
         super(type, dbStorageDirectory);
     }
 
+    private void commitIfSupported() {
+        if (graph.features().graph().supportsTransactions() && numEdgeIterators == 0 && numVertexIterators == 0) {
+            graph.tx().commit();
+        }
+    }
+
+    private void rollbackIfSupported() {
+        if (graph.features().graph().supportsTransactions()) {
+            graph.tx().rollback();
+        }
+    }
     @Override
     public int getNodeCount() {
         long nodeCount = graph.traversal().V().count().next();
@@ -31,12 +44,16 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
 
     @Override
     public Iterator<Vertex> getVertexIterator() {
-        return graph.vertices();
+        Iterator<Vertex> it = graph.vertices();
+        numVertexIterators++;
+        return it;
     }
 
     @Override
     public Iterator<Edge> getAllEdges() {
-        return graph.edges();
+        Iterator<Edge> it = graph.edges();
+        numEdgeIterators++;
+        return it;
     }
 
     @Override
@@ -46,14 +63,19 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         // I'm worried about side-effects on the latter and maybe poor performance on the former but i don't have
         // a clue, really... I think we need iterate() to actually do the traversal... True, but iterate()
         // does not return anything... as Traverals implement the iterator interface, we can just return that...
-        return graph.traversal().V(v).bothE();
+        Iterator<Edge> it = graph.traversal().V(v).bothE();
+        numEdgeIterators++;
+        return it;
     }
 
     @Override
     public Vertex getOtherVertexFromEdge(Edge r, Vertex oneVertex) {
         try {
-            return graph.traversal().V(oneVertex).bothE().filter(has(T.id, r.id())).otherV().next();
+            Vertex v = graph.traversal().V(oneVertex).bothE().filter(has(T.id, r.id())).otherV().next();
+            commitIfSupported();
+            return v;
         } catch (NoSuchElementException e) {
+            rollbackIfSupported();
             throw new BenchmarkingException(
                     String.format("oneVertex '%s' is not connected to Edge '%s'!", oneVertex, r));
         }
@@ -61,19 +83,26 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
 
     @Override
     public Vertex getSrcVertexFromEdge(Edge edge) {
-        return graph.traversal().E(edge).outV().next();
+        Vertex v = graph.traversal().E(edge).outV().next();
+        commitIfSupported();
+        return v;
     }
 
     @Override
     public Vertex getDestVertexFromEdge(Edge edge) {
-        return graph.traversal().E(edge).inV().next();
+        Vertex v = graph.traversal().E(edge).inV().next();
+        commitIfSupported();
+        return v;
     }
 
     @Override
     public Vertex getVertex(Integer i) {
         try {
-            return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, i).next(); //todo test
+            Vertex v = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, i).next();
+            commitIfSupported();
+            return v;
         } catch (NoSuchElementException e) {
+            rollbackIfSupported();
             throw new BenchmarkingException(String.format("No Vertex with id '%d' in graph", i));
         }
     }
@@ -108,6 +137,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         for(Vertex v: neighborNodes) {
             neighborIds.add((Integer) v.property(NODE_ID).value());
         }
+        commitIfSupported();
         return neighborIds;
     }
 
@@ -116,29 +146,41 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         // the following assumes that the first path found is the shortest.
         graph.traversal().V(fromNode).repeat(out().simplePath()).until(
                 hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, node)).path().limit(1).iterate();
+        commitIfSupported();
         // todo: test
     }
 
     @Override
     public double getNodeWeight(int nodeId) {
-        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
-                .has(NODE_ID, nodeId).outE().count().next(); //todo test
+        double weight = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                        .has(NODE_ID, nodeId).outE().count().next(); //todo test
+        commitIfSupported();
+        return weight;
     }
 
     @Override
     public void cleanupEdgeIterator(Iterator<Edge> it) {
-        //NOOP
+        numEdgeIterators--;
+        commitIfSupported(); // we can't commit here already otherwise all iterators invalidated!
     }
 
     @Override
     public void cleanupVertexIterator(Iterator<Vertex> it) {
-        //NOOP
+        numVertexIterators--;
+        commitIfSupported();
     }
 
     @Override
     public boolean nodeExists(int nodeId) {
-        return graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId).hasNext();
-        //todo test
+        boolean exists = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId).hasNext();
+        commitIfSupported();
+        return exists;
+    }
 
+    @Override
+    public double getGraphWeightSum() {
+        double weight = graph.traversal().E().count().next();
+        commitIfSupported();
+        return weight;
     }
 }

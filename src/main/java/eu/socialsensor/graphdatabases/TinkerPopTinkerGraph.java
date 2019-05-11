@@ -141,13 +141,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     }
 
     @Override
-    public double getGraphWeightSum() {
-        throw new RuntimeException("getGraphWeightSum not implemented");
-//        return 0;        //todo
-
-    }
-
-    @Override
     public int reInitializeCommunities() {
         throw new RuntimeException("reInitializeCommunities not implemented");
 //        return 0;        //todo

@@ -202,4 +202,22 @@ public class TinkerPopTinkerGraphTest {
         assertFalse(db.nodeExists(-1));
 
     }
+
+    @Test
+    public void getGraphWeightSum() {
+        Vertex v1 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v1.property(GraphDatabaseBase.NODE_ID, 1);
+        Vertex v2 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v2.property(GraphDatabaseBase.NODE_ID, 2);
+        Vertex v3 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v3.property(GraphDatabaseBase.NODE_ID, 3);
+        Vertex v4 = db.graph.addVertex(TinkerPopSingleInsertionBase.NODE_LABEL);
+        v4.property(GraphDatabaseBase.NODE_ID, 4);
+
+        Edge e1 = v1.addEdge("label", v2);
+        Edge e2 = v1.addEdge("label", v3);
+        Edge e3 = v3.addEdge("label", v1);
+        Edge e4 = v3.addEdge("label", v1);
+        assertEquals(4, (int) db.getGraphWeightSum());
+    }
 }
