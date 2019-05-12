@@ -3,7 +3,6 @@ package eu.socialsensor.insert;
 
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
-import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.main.GraphDatabaseType;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
@@ -31,7 +30,7 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
     public HGHandle getOrCreate( String nodeId ) {
         Node n = new Node();
         n.setId(Integer.parseInt(nodeId));
-        return HGQuery.hg.addUnique(hyperGraph, n, NodeQueries.queryById(n.getId()));
+        return HGQuery.hg.assertAtom(hyperGraph, n);
     }
 
     @Override
