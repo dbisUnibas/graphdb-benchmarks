@@ -71,9 +71,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public void createGraphForSingleLoad() {
-        neo4jGraph = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbStorageDirectory)
-        .setConfig(GraphDatabaseSettings.pagecache_memory, "4g")
-        .newGraphDatabase();
+        neo4jGraph = new GraphDatabaseFactory().newEmbeddedDatabase(dbStorageDirectory);
         try (final Transaction tx = beginUnforcedTransaction()) {
             try {
                 schema = neo4jGraph.schema();
