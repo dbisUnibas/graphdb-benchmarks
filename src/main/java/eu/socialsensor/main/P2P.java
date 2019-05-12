@@ -1,22 +1,19 @@
-package eu.socialsensor.graphdatabases.hypergraph;
+package eu.socialsensor.main;
 
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.cact.DefineAtom;
-import org.junit.Test;
 
 import java.io.File;
 import java.util.concurrent.Future;
 
-public class TestHyperGraphP2PTest {
+public class P2P {
 
-  @Test
-  public void testBasicP2P(){
+  public static void main(String[] args){
     // Let's startup our two peers.
-    HyperGraphPeer peer1 = startPeer(new File(this.getClass().getResource("/hgp2pA.json").getPath()));
-    HyperGraphPeer peer2 = startPeer(new File(this.getClass().getResource("/hgp2pB.json").getPath()));
+    HyperGraphPeer peer1 = startPeer(new File("/home/ubuntu/hgp2pA.json"));
+    HyperGraphPeer peer2 = startPeer(new File("/home/ubuntu/hgp2pB.json"));
 
     // Add some atom to the graph of the first peer.
     HGHandle fromPeer1 = peer1.getGraph().add("From Peer1");
@@ -31,16 +28,9 @@ public class TestHyperGraphP2PTest {
     //
     // The the newly constructed activity is passed onto the ActivityManager's
     // initiate method which will take it from there.
-
-
-    HGPeerIdentity pid2 = peer2.getIdentity();
-    HyperGraph graph = peer2.getGraph();
-
-    pid2.setIpAddress("127.0.0.1");
-
+    HGPeerIdentity pid2 =  peer2.getIdentity();
     peer1.getActivityManager().initiateActivity(
-            new DefineAtom(peer1, fromPeer1, pid2)
-    );
+            new DefineAtom(peer1, fromPeer1, pid2));
 
     // 2 seconds should be enough in a single machine to transfer the atom
     try { Thread.sleep(2000); } catch (Throwable t) { }

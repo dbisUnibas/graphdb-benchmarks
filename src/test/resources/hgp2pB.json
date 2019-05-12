@@ -1,0 +1,16 @@
+{
+  "interfaceType"    : "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
+  "localDB": "/tmp/hgdbpeertest",
+  "peerName"    : "HGDBPeer",
+  "bootstrap" : [ {"class" : "org.hypergraphdb.peer.bootstrap.AffirmIdentityBootstrap", "config" : {}},
+    {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}}] ,
+  "interfaceConfig"        :
+  {
+    "user" : "b",
+    "password" : "b",
+    "serverUrl"    : "localhost",
+    "room" : "room1@conference.localhost",
+    "autoRegister" : true
+  }
+}
+
