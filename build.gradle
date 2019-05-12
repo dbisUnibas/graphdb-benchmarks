@@ -125,7 +125,7 @@ dependencies {
 jar {
     manifest {
         attributes "Manifest-Version": "1.0"
-        attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
+        attributes "Copyright": "Databases aorg.neo4j.kernel.api.index.IndexProvidernd Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
         attributes "Version": "$version"
         attributes "Main-Class": mainClassName
     }
@@ -134,6 +134,7 @@ jar {
 
 shadowJar {
     classifier = null
+    mergeServiceFiles()
     zip64 = true
 }
 
