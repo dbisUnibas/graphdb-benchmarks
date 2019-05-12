@@ -12,17 +12,6 @@ import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.hypergraphdb.HGConfiguration;
 import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
@@ -33,6 +22,10 @@ import org.hypergraphdb.algorithms.GraphClassics;
 import org.hypergraphdb.algorithms.HGALGenerator;
 import org.hypergraphdb.atom.HGRel;
 import org.hypergraphdb.query.HGQueryCondition;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Hyper Graph  database implementation
@@ -154,19 +147,6 @@ public class HyperGraphDatabase
   public Iterator<Node> getVertexIterator() {
     return graph.<Node>getAll(NodeQueries.nodeType()).iterator();
   }
-
-/*    @Override
-    public Iterator<HyperGraphDatabase.Node> getNeighborsOfVertex(Node v) {
-        LinkCondition vertex = hg.link(hg.assertAtom(graph, v));
-        AtomTypeCondition edge = hg.type(this.similarRelType);
-        HGQueryCondition similarNeighborOfNode = hg.and(vertex, edge);
-
-        HGHandle link = graph.getOne(similarNeighborOfNode);
-        Iterator<HGHandle> neighbors = link.iterator();
-        neighbors.next();
-        return null;
-
-        */
 
   @Override
   public boolean vertexIteratorHasNext(
