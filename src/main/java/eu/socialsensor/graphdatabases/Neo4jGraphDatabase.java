@@ -13,6 +13,7 @@ import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
@@ -70,7 +71,9 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
     @Override
     public void createGraphForSingleLoad() {
-        neo4jGraph = new GraphDatabaseFactory().newEmbeddedDatabase(dbStorageDirectory);
+        neo4jGraph = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(dbStorageDirectory)
+        .setConfig(GraphDatabaseSettings.pagecache_memory, "4g")
+        .newGraphDatabase();
         try (final Transaction tx = beginUnforcedTransaction()) {
             try {
                 schema = neo4jGraph.schema();
