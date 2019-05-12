@@ -10,6 +10,8 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
@@ -182,5 +184,57 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         double weight = graph.traversal().E().count().next();
         commitIfSupported();
         return weight;
+    }
+
+    @Override
+    public void initCommunityProperty() {
+        int community = 0;
+        Iterator<Vertex> v = graph.vertices();
+        while (v.hasNext()) {
+            Vertex ve = v.next();
+            ve.property(COMMUNITY, community);
+            ve.property(NODE_COMMUNITY, community);
+            community++;
+        }
+        commitIfSupported();
+        //todo: test
+    }
+
+    @Override
+    public Set<Integer> getCommunitiesConnectedToNodeCommunities(int nodeCommunities) {
+        Set<Object> set = graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunities)
+                .outE(SIMILAR).otherV().properties(NODE_COMMUNITY).value().toSet();
+        commitIfSupported();
+        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+    }
+    //todo: test
+
+    @Override
+    public Set<Integer> getNodesFromCommunity(int community) {
+        Set<Object> set = graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(COMMUNITY, community)
+                .outE(SIMILAR).otherV().properties(COMMUNITY).value().toSet();
+        commitIfSupported();
+        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Integer> getNodesFromNodeCommunity(int nodeCommunity) {
+        Set<Object> set = graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
+                .properties(NODE_ID).value().toSet();
+        commitIfSupported();
+        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+    }
+
+    @Override
+    public double getEdgesInsideCommunity(int nodeCommunity, int communityNodes) {
+        double count = graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY,nodeCommunity)
+                .outE(SIMILAR).as("edge")
+                .otherV().has(COMMUNITY, communityNodes).select("edge").count().next();
+        commitIfSupported();
+        return count; //todo: test that. Most likely wrong...
     }
 }

@@ -90,38 +90,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     }
 
     @Override
-    public void initCommunityProperty() {
-        throw new RuntimeException("initCommunityProperty not implemented");
-        //todo
-
-    }
-
-    @Override
-    public Set<Integer> getCommunitiesConnectedToNodeCommunities(int nodeCommunities) {
-        throw new RuntimeException("getCommunitiesConnectedToNodeCommunities not implemented");
-
-//        return null; //todo
-    }
-
-    @Override
-    public Set<Integer> getNodesFromCommunity(int community) {
-        throw new RuntimeException("getNodesFromCommunity not implemented");
-//        return null; //todo
-    }
-
-    @Override
-    public Set<Integer> getNodesFromNodeCommunity(int nodeCommunity) {
-        throw new RuntimeException("getNodesFromNodeCommunity not implemented");
-//        return null; //todo
-    }
-
-    @Override
-    public double getEdgesInsideCommunity(int nodeCommunity, int communityNodes) {
-        throw new RuntimeException("getEdgesInsideCommunity not implemented");
-//        return 0; //todo
-    }
-
-    @Override
     public double getCommunityWeight(int community) {
         throw new RuntimeException("getCommunityWeight not implemented");
 //        return 0; //todo
