@@ -90,25 +90,6 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     }
 
     @Override
-    public double getCommunityWeight(int community) {
-        throw new RuntimeException("getCommunityWeight not implemented");
-//        return 0; //todo
-    }
-
-    @Override
-    public double getNodeCommunityWeight(int nodeCommunity) {
-        throw new RuntimeException("getNodeCommunityWeight not implemented");
-//        return 0; //todo
-    }
-
-    @Override
-    public void moveNode(int from, int to) {
-        throw new RuntimeException("moveNode not implemented");
-//todo
-
-    }
-
-    @Override
     public int reInitializeCommunities() {
         throw new RuntimeException("reInitializeCommunities not implemented");
 //        return 0;        //todo

@@ -237,4 +237,33 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         commitIfSupported();
         return count; //todo: test that. Most likely wrong...
     }
+
+    private double getWeight(String property, int community) {
+        double weight = 0;
+        if (graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                .has(property, community).count().next() > 1) {
+            weight = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                    .has(property, community).outE().count().next();
+        }        //todo: test
+
+        commitIfSupported();
+        return weight;
+    }
+    @Override
+    public double getCommunityWeight(int community) {
+        return getWeight(COMMUNITY, community);
+    }
+
+    @Override
+    public double getNodeCommunityWeight(int nodeCommunity) {
+        return getWeight(NODE_COMMUNITY, nodeCommunity);
+    }
+
+    @Override
+    public void moveNode(int nodeCommunity, int toCommunity) {
+        graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                .has(NODE_COMMUNITY, nodeCommunity).property(COMMUNITY, toCommunity).iterate();
+        // todo: check if this changes the property value or just adds another one.
+        // todo: this means checking what the neo4j code does...
+    }
 }

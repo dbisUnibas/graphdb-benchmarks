@@ -103,21 +103,6 @@ public class TinkerPopNeo4j extends TinkerPopBase {
     }
 
     @Override
-    public double getCommunityWeight(int community) {
-        return 0;
-    }
-
-    @Override
-    public double getNodeCommunityWeight(int nodeCommunity) {
-        return 0;
-    }
-
-    @Override
-    public void moveNode(int from, int to) {
-
-    }
-
-    @Override
     public int reInitializeCommunities() {
         return 0;
     }
