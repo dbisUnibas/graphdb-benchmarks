@@ -6,10 +6,10 @@
     {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}}] ,
   "interfaceConfig"        :
   {
-    "user" : "a",
+    "user" : "a0",
     "password" : "a",
-    "serverUrl"    : "10.34.58.115",
-    "room" : "room1@conference.10.34.58.115",
+    "serverUrl"    : "10.34.58.192",
+    "room" : "room1@conference.10.34.58.192",
     "autoRegister" : true
   }
 }

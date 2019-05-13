@@ -4,32 +4,21 @@ package eu.socialsensor.graphdatabases.hypergraph;
 import com.google.common.collect.Sets;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.hypergraphdb.HGEnvironment;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRel;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runners.MethodSorters;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class HyperGraphDatabaseTest {
-
   private File databaseDir = new File(this.getClass().getResource("/").getPath(), "data");
   private File testData = new File(this.getClass().getResource("/test.data").getPath());
   private File resultDir = new File(this.getClass().getResource("/").getPath(), "result");
