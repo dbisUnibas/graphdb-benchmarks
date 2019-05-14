@@ -489,7 +489,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
         try (final Transaction tx = beginUnforcedTransaction()) {
             try {
-                Node node = neo4jGraph.findNode(NODE_LABEL, NODE_COMMUNITY, nodeCommunity);
+                Node node = neo4jGraph.findNodes(NODE_LABEL, NODE_COMMUNITY, nodeCommunity).next();
                 community = (Integer) (node.getProperty(COMMUNITY));
                 tx.success();
             } catch (Exception e) {
