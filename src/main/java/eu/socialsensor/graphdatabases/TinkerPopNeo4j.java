@@ -10,13 +10,8 @@ import eu.socialsensor.utils.Utils;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.tinkerpop.gremlin.neo4j.structure.Neo4jGraph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Class implementing a tinkerpop-embedded Neo4j database
@@ -100,30 +95,5 @@ public class TinkerPopNeo4j extends TinkerPopBase {
     @Override
     public void shutdownMassiveGraph() {
         shutdown();
-    }
-
-    @Override
-    public int reInitializeCommunities() {
-        return 0;
-    }
-
-    @Override
-    public int getCommunityFromNode(int nodeId) {
-        return 0;
-    }
-
-    @Override
-    public int getCommunity(int nodeCommunity) {
-        return 0;
-    }
-
-    @Override
-    public int getCommunitySize(int community) {
-        return 0;
-    }
-
-    @Override
-    public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
-        return null;
     }
 }

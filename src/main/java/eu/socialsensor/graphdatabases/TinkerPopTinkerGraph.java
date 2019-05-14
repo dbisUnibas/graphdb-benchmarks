@@ -1,7 +1,6 @@
 package eu.socialsensor.graphdatabases;
 
 import eu.socialsensor.insert.TinkerPopMassiveInsertionTinkerGraph;
-import eu.socialsensor.insert.TinkerPopSingleInsertionBase;
 import eu.socialsensor.insert.TinkerPopSingleInsertionTinkerGraph;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.BenchmarkingException;
@@ -9,18 +8,10 @@ import eu.socialsensor.main.GraphDatabaseType;
 import eu.socialsensor.utils.Utils;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.hasLabel;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.out;
 
 public class TinkerPopTinkerGraph extends TinkerPopBase {
 
@@ -87,40 +78,5 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
     @Override
     public void shutdownMassiveGraph() {
         shutdown();
-    }
-
-    @Override
-    public int reInitializeCommunities() {
-        throw new RuntimeException("reInitializeCommunities not implemented");
-//        return 0;        //todo
-
-    }
-
-    @Override
-    public int getCommunityFromNode(int nodeId) {
-        throw new RuntimeException("getCommunityFromNode not implemented");
-//        return 0;        //todo
-
-    }
-
-    @Override
-    public int getCommunity(int nodeCommunity) {
-        throw new RuntimeException("getCommunity not implemented");
-//        return 0;        //todo
-
-    }
-
-    @Override
-    public int getCommunitySize(int community) {
-        throw new RuntimeException("getCommunitySize not implemented");
-//        return 0;        //todo
-
-    }
-
-    @Override
-    public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
-        throw new RuntimeException("mapCommunities not implemented");
-//        return null;        //todo
-
     }
 }

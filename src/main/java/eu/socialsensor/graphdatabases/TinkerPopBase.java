@@ -11,7 +11,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
@@ -265,5 +264,75 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
                 .has(NODE_COMMUNITY, nodeCommunity).property(COMMUNITY, toCommunity).iterate();
         // todo: check if this changes the property value or just adds another one.
         // todo: this means checking what the neo4j code does...
+    }
+
+    @Override
+    public int reInitializeCommunities() {
+        Map<Integer, Integer> initCommunities = new HashMap<>();
+        int communityCounter = 0;
+        Iterator<Vertex> vit = graph.vertices();
+        while (vit.hasNext()) {
+            Vertex v = vit.next();
+            Integer communityId = (Integer) (v.properties(COMMUNITY).next().value());
+            if (!initCommunities.containsKey(communityId)) {
+                initCommunities.put(communityId, communityCounter);
+                communityCounter++;
+            }
+            int newCommunityId = initCommunities.get(communityId);
+            v.property(COMMUNITY, newCommunityId);
+            v.property(NODE_COMMUNITY, newCommunityId);
+        }
+        commitIfSupported();
+        return communityCounter;
+        //todo: test
+    }
+
+    @Override
+    public int getCommunity(int nodeCommunity) {
+        int community;
+        community = Integer.parseInt (graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
+                .properties(COMMUNITY).value().next().toString());
+        commitIfSupported();
+        return community; //todo test
+    }
+
+    @Override
+    public int getCommunityFromNode(int nodeId) {
+        int community;
+        community = Integer.parseInt (graph.traversal().V()
+                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId)
+                .properties(COMMUNITY).value().next().toString());
+        commitIfSupported();
+        return community; //todo test
+    }
+
+    @Override
+    public int getCommunitySize(int community) {
+        Set<Integer> nodeCommunities = new HashSet<>();
+        long numNodeCommunities;
+        numNodeCommunities = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                .has(COMMUNITY, community).properties(NODE_COMMUNITY).value().dedup().count().next();
+        //note: in the above I get the property "NODE_COMMUNITY" in the neo4j code, they get the value "COMMUNITY"
+        //which I think makes no sense as this is filtered by before anyways...
+        if (numNodeCommunities > Integer.MAX_VALUE) {
+            rollbackIfSupported();
+            throw new BenchmarkingException("Community size too large for int representation");
+        }
+        commitIfSupported();
+        return (int) numNodeCommunities;//todo test
+    }
+
+    @Override
+    public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
+        Map<Integer, List<Integer>> communities = new HashMap<>();
+        for (int i = 0; i < numberOfCommunities; i++) {
+            List<Integer> ids = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+                        .has(COMMUNITY, i).values(NODE_ID).toList()
+                    .stream().mapToInt(id -> Integer.parseInt((String) id)).boxed().collect(Collectors.toList());
+            communities.put(i, ids);
+        }
+        commitIfSupported();
+        return communities;//todo test
     }
 }
