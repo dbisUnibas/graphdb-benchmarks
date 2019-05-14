@@ -23,9 +23,10 @@ public abstract class TinkerPopSingleInsertionBase extends InsertionBase<Vertex>
 
     @Override
     protected Vertex getOrCreate(String value) {
-        Vertex v = myGraph.traversal().V().has(NODE_LABEL, GraphDatabaseBase.NODE_ID, value).fold().coalesce(
+        Integer val = Integer.parseInt(value);
+        Vertex v = myGraph.traversal().V().has(NODE_LABEL, GraphDatabaseBase.NODE_ID, val).fold().coalesce(
                 unfold(),
-                addV(NODE_LABEL).property(GraphDatabaseBase.NODE_ID, value)).next();
+                addV(NODE_LABEL).property(GraphDatabaseBase.NODE_ID, val)).next();
         if (supportsTransactions) {
             myGraph.tx().commit();
         }

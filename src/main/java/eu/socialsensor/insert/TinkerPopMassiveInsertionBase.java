@@ -13,7 +13,7 @@ import java.util.Map;
 import static eu.socialsensor.graphdatabases.GraphDatabaseBase.NODE_ID;
 
 public abstract class TinkerPopMassiveInsertionBase extends InsertionBase<Vertex> {
-    Map<String, Vertex> cache = new HashMap<>();
+    Map<Integer, Vertex> cache = new HashMap<>();
     Graph myGraph;
     public static final String NODE_LABEL = "Node";
 
@@ -25,12 +25,13 @@ public abstract class TinkerPopMassiveInsertionBase extends InsertionBase<Vertex
 
     @Override
     protected Vertex getOrCreate(String value) {
-        Vertex v = cache.get(value);
+        int val = Integer.parseInt(value);
+        Vertex v = cache.get(val);
         if (v != null) {
             return v;
         } else {
-            v = myGraph.addVertex(T.label, NODE_LABEL, NODE_ID, value);
-            cache.put(value, v);
+            v = myGraph.addVertex(T.label, NODE_LABEL, NODE_ID, val);
+            cache.put(val, v);
             return v;
         }
     }
