@@ -22,6 +22,7 @@ import org.hypergraphdb.algorithms.GraphClassics;
 import org.hypergraphdb.algorithms.HGALGenerator;
 import org.hypergraphdb.atom.HGRel;
 import org.hypergraphdb.query.HGQueryCondition;
+import org.hypergraphdb.storage.bje.BJEConfig;
 
 import java.io.File;
 import java.util.*;
@@ -421,7 +422,8 @@ public class HyperGraphDatabase
     HGConfiguration config = new HGConfiguration();
     config.setTransactional(false);
     config.setSkipOpenedEvent(true);
-
+    BJEConfig storeConfig = (BJEConfig) config.getStoreImplementation().getConfiguration();
+    storeConfig.getEnvironmentConfig().setCacheSize(1024 * 1024 * 1000);
     return config;
   }
 }
