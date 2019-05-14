@@ -3,6 +3,7 @@ package eu.socialsensor.insert;
 
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
+import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.main.GraphDatabaseType;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
@@ -21,16 +22,16 @@ import java.io.File;
 @SuppressWarnings("deprecation")
 public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
     private final HyperGraph hyperGraph;
-
+    private final HGHandle nodeHandleType;
     public HyperGraphdataSingleInsertion(HyperGraph hyperGraph, File resultsPath ) {
         super( GraphDatabaseType.HYPERGRAPH_DB, resultsPath );
         this.hyperGraph = hyperGraph;
+        this.nodeHandleType = NodeQueries.getNodeTypeHandle(hyperGraph);
     }
 
     public HGHandle getOrCreate( String nodeId ) {
-        Node n = new Node();
-        n.setId(Integer.parseInt(nodeId));
-        return HGQuery.hg.assertAtom(hyperGraph, n);
+        Node n = new Node(Integer.parseInt(nodeId), 0,0);
+        return HGQuery.hg.assertAtom(hyperGraph, n, nodeHandleType);
     }
 
     @Override
