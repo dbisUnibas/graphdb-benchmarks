@@ -338,7 +338,6 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
                 throw new BenchmarkingException("unable to get nodes from node community", e);
             }
         }
-
         return nodes;
     }
 
@@ -531,6 +530,8 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
                 while (nodes.hasNext()) {
                     Node n = nodes.next();
                     Integer nodeCommunity = (Integer) (n.getProperty(COMMUNITY));
+                    //wtf? that's always == community, at least if findNodes() works the way I expect it to...
+                    //probably they meant NODE_COMMUNITY...
                     nodeCommunities.add(nodeCommunity);
                 }
                 tx.success();
