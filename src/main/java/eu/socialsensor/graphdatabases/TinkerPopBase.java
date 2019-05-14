@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static eu.socialsensor.insert.TinkerPopSingleInsertionBase.NODE_LABEL;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
 public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, Iterator<Edge>, Vertex, Edge> {
@@ -99,7 +100,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     @Override
     public Vertex getVertex(Integer i) {
         try {
-            Vertex v = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, i).next();
+            Vertex v = graph.traversal().V().hasLabel(NODE_LABEL).has(NODE_ID, i).next();
             commitIfSupported();
             return v;
         } catch (NoSuchElementException e) {
@@ -133,7 +134,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         // todo: I copied behavior from neo4j implementation (also for getNeighbors()). But getNeighborsOfV()
         // todo: considers both directions, whereas this method only considers outgoing. Is this intentional?
         Set<Integer> neighborIds = new HashSet<>();
-        List <Vertex> neighborNodes = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+        List <Vertex> neighborNodes = graph.traversal().V().hasLabel(NODE_LABEL)
                 .has(NODE_ID, nodeId).out().toList();
         for(Vertex v: neighborNodes) {
             neighborIds.add((Integer) v.property(NODE_ID).value());
@@ -146,15 +147,17 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     public void shortestPath(Vertex fromNode, Integer node) {
         // the following assumes that the first path found is the shortest.
         graph.traversal().V(fromNode).repeat(out().simplePath()).until(
-                hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, node)).path().limit(1).iterate();
+                hasLabel(NODE_LABEL).has(NODE_ID, node)).path().limit(1).iterate();
+//        graph.traversal().V(fromNode).to(graph.traversal().V().hasLabel(NODE_LABEL).has(NODE_ID, node).next())
+//                .shortestPath().iterate();
         commitIfSupported();
         // todo: test
     }
 
     @Override
     public double getNodeWeight(int nodeId) {
-        double weight = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
-                        .has(NODE_ID, nodeId).outE().count().next(); //todo test
+        double weight = graph.traversal().V().hasLabel(NODE_LABEL)
+                        .has(NODE_ID, nodeId).outE().count().next();
         commitIfSupported();
         return weight;
     }
@@ -162,7 +165,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     @Override
     public void cleanupEdgeIterator(Iterator<Edge> it) {
         numEdgeIterators--;
-        commitIfSupported(); // we can't commit here already otherwise all iterators invalidated!
+        commitIfSupported();
     }
 
     @Override
@@ -173,7 +176,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
 
     @Override
     public boolean nodeExists(int nodeId) {
-        boolean exists = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId).hasNext();
+        boolean exists = graph.traversal().V().hasLabel(NODE_LABEL).has(NODE_ID, nodeId).hasNext();
         commitIfSupported();
         return exists;
     }
@@ -196,54 +199,52 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
             community++;
         }
         commitIfSupported();
-        //todo: test
     }
 
     @Override
     public Set<Integer> getCommunitiesConnectedToNodeCommunities(int nodeCommunities) {
         Set<Object> set = graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunities)
+                .hasLabel(NODE_LABEL).has(NODE_COMMUNITY, nodeCommunities)
                 .outE(SIMILAR).otherV().properties(NODE_COMMUNITY).value().toSet();
         commitIfSupported();
-        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+        return set.stream().mapToInt(i -> (Integer) i).boxed().collect(Collectors.toSet());
     }
-    //todo: test
 
     @Override
     public Set<Integer> getNodesFromCommunity(int community) {
         Set<Object> set = graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(COMMUNITY, community)
-                .outE(SIMILAR).otherV().properties(COMMUNITY).value().toSet();
+                .hasLabel(NODE_LABEL).has(COMMUNITY, community)
+                .properties(NODE_ID).value().toSet();
         commitIfSupported();
-        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+        return set.stream().mapToInt(i -> (Integer) i).boxed().collect(Collectors.toSet());
     }
 
     @Override
     public Set<Integer> getNodesFromNodeCommunity(int nodeCommunity) {
         Set<Object> set = graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
+                .hasLabel(NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
                 .properties(NODE_ID).value().toSet();
         commitIfSupported();
-        return set.stream().mapToInt(i -> Integer.parseInt((String) i)).boxed().collect(Collectors.toSet());
+        return set.stream().mapToInt(i -> (Integer) i).boxed().collect(Collectors.toSet());
     }
 
     @Override
     public double getEdgesInsideCommunity(int nodeCommunity, int communityNodes) {
         double count = graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY,nodeCommunity)
+                .hasLabel(NODE_LABEL).has(NODE_COMMUNITY,nodeCommunity)
                 .outE(SIMILAR).as("edge")
                 .otherV().has(COMMUNITY, communityNodes).select("edge").count().next();
         commitIfSupported();
-        return count; //todo: test that. Most likely wrong...
+        return count;
     }
 
     private double getWeight(String property, int community) {
         double weight = 0;
-        if (graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+        if (graph.traversal().V().hasLabel(NODE_LABEL)
                 .has(property, community).count().next() > 1) {
-            weight = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+            weight = graph.traversal().V().hasLabel(NODE_LABEL)
                     .has(property, community).outE().count().next();
-        }        //todo: test
+        }
 
         commitIfSupported();
         return weight;
@@ -260,10 +261,8 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
 
     @Override
     public void moveNode(int nodeCommunity, int toCommunity) {
-        graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+        graph.traversal().V().hasLabel(NODE_LABEL)
                 .has(NODE_COMMUNITY, nodeCommunity).property(COMMUNITY, toCommunity).iterate();
-        // todo: check if this changes the property value or just adds another one.
-        // todo: this means checking what the neo4j code does...
     }
 
     @Override
@@ -284,14 +283,13 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
         }
         commitIfSupported();
         return communityCounter;
-        //todo: test
     }
 
     @Override
     public int getCommunity(int nodeCommunity) {
         int community;
         community = Integer.parseInt (graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
+                .hasLabel(NODE_LABEL).has(NODE_COMMUNITY, nodeCommunity)
                 .properties(COMMUNITY).value().next().toString());
         commitIfSupported();
         return community; //todo test
@@ -301,7 +299,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     public int getCommunityFromNode(int nodeId) {
         int community;
         community = Integer.parseInt (graph.traversal().V()
-                .hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL).has(NODE_ID, nodeId)
+                .hasLabel(NODE_LABEL).has(NODE_ID, nodeId)
                 .properties(COMMUNITY).value().next().toString());
         commitIfSupported();
         return community; //todo test
@@ -311,7 +309,7 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     public int getCommunitySize(int community) {
         Set<Integer> nodeCommunities = new HashSet<>();
         long numNodeCommunities;
-        numNodeCommunities = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+        numNodeCommunities = graph.traversal().V().hasLabel(NODE_LABEL)
                 .has(COMMUNITY, community).properties(NODE_COMMUNITY).value().dedup().count().next();
         //note: in the above I get the property "NODE_COMMUNITY" in the neo4j code, they get the value "COMMUNITY"
         //which I think makes no sense as this is filtered by before anyways...
@@ -327,9 +325,9 @@ public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, 
     public Map<Integer, List<Integer>> mapCommunities(int numberOfCommunities) {
         Map<Integer, List<Integer>> communities = new HashMap<>();
         for (int i = 0; i < numberOfCommunities; i++) {
-            List<Integer> ids = graph.traversal().V().hasLabel(TinkerPopSingleInsertionBase.NODE_LABEL)
+            List<Integer> ids = graph.traversal().V().hasLabel(NODE_LABEL)
                         .has(COMMUNITY, i).values(NODE_ID).toList()
-                    .stream().mapToInt(id -> Integer.parseInt((String) id)).boxed().collect(Collectors.toList());
+                    .stream().mapToInt(id -> (Integer) id).boxed().collect(Collectors.toList());
             communities.put(i, ids);
         }
         commitIfSupported();
