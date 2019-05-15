@@ -77,7 +77,7 @@ dependencies {
 
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.1'
-	  compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
 	
     compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.1'
@@ -116,7 +116,6 @@ dependencies {
     compile group: 'com.sparsity', name: 'sparkseejava', version:'5.0.0'
     compile group: 'com.tinkerpop.blueprints', name: 'blueprints-sparksee-graph', version:'2.6.0'
     compile group: 'com.codahale.metrics', name: 'metrics-core', version:'3.0.0-BETA3'
-	
 	// ----- test -----
     testCompile group: 'junit', name: 'junit', version:'4.11'
 }
@@ -125,7 +124,7 @@ dependencies {
 jar {
     manifest {
         attributes "Manifest-Version": "1.0"
-        attributes "Copyright": "Databases aorg.neo4j.kernel.api.index.IndexProvidernd Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
+        attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
         attributes "Version": "$version"
         attributes "Main-Class": mainClassName
     }
