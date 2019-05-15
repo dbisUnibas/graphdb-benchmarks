@@ -41,7 +41,7 @@ version = '1.0'
 
 description = "Graph DB Benchmarking Client"
 
-mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark"
+mainClassName = "eu.socialsensor.main.App"
 
 
 compileJava.options.encoding = 'UTF-8'
@@ -118,6 +118,7 @@ dependencies {
 
 
 jar {
+    exclude('data/**')
     manifest {
         attributes "Manifest-Version": "1.0"
         attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
@@ -145,5 +146,7 @@ artifacts {
 javadoc {
     failOnError = false
 }
+
+
 
 
