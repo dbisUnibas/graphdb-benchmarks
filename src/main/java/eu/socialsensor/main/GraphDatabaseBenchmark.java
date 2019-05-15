@@ -28,23 +28,9 @@ public class GraphDatabaseBenchmark {
 
     public static final Logger logger = LogManager.getLogger();
     public static final MetricRegistry metrics = new MetricRegistry();
-    public static final String DEFAULT_INPUT_PROPERTIES = "META-INF/input.properties";
     private final BenchmarkConfiguration config;
 
     private final CsvReporter reporter;
-
-
-    public static final Configuration getAppConfigFromClasspath() {
-        Configuration appConfig;
-        try {
-            ClassLoader classLoader = GraphDatabaseBenchmark.class.getClassLoader();
-            URL resource = classLoader.getResource( DEFAULT_INPUT_PROPERTIES );
-            appConfig = new PropertiesConfiguration( resource );
-        } catch ( ConfigurationException e ) {
-            throw new IllegalArgumentException( String.format( "Unable to load properties file from classpath because %s", e.getMessage() ) );
-        }
-        return appConfig;
-    }
 
 
     public GraphDatabaseBenchmark( BenchmarkConfiguration benchmarkConfiguration ) throws IllegalArgumentException {
@@ -100,34 +86,6 @@ public class GraphDatabaseBenchmark {
                 throw new UnsupportedOperationException( "unsupported benchmark " + type == null ? "null" : type.toString() );
         }
         benchmark.startBenchmark();
-    }
-
-
-    /**
-     * This is the main function. Set the proper property file and run
-     */
-    public static void main( String[] args ) {
-        final String inputPath = args.length != 1 ? null : args[0];
-
-        final Configuration appConfig;
-        try {
-            appConfig =
-                    inputPath == null
-                            ? getAppConfigFromClasspath()
-                            : new PropertiesConfiguration( new File( inputPath ) );
-        } catch ( ConfigurationException e ) {
-            throw new IllegalArgumentException( String.format( "Unable to load properties file %s because %s", inputPath, e.getMessage() ) );
-        }
-
-        GraphDatabaseBenchmark benchmarks = new GraphDatabaseBenchmark( new BenchmarkConfiguration( appConfig ) );
-        try {
-            benchmarks.run();
-        } catch ( Throwable t ) {
-            logger.fatal( t.getMessage() );
-            t.printStackTrace();
-            System.exit( 1 );
-        }
-        System.exit( 0 );
     }
 
 
