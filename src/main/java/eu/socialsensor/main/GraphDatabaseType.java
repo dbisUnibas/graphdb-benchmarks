@@ -15,6 +15,7 @@ public enum GraphDatabaseType {
     NEO4J( "Neo4j", null, "neo4j" ),
     SPARKSEE( "Sparksee", null, "sparksee" ),
     TINKERPOP_NEO4J("gremlin-neo4j", null, "tinkerpop neo4j"),
+    TINKERPOP_NEO4J_HA("gremlin-neo4j", null, "tinkerpop neo4j HACluster"),
     TINKERPOP_TINKERGRAPH("gremlin-tinkergraph", null, "tinkerpop tinkergraph");
 
     private final String backend;

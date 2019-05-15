@@ -6,7 +6,7 @@ import org.apache.tinkerpop.gremlin.structure.Graph;
 import java.io.File;
 
 public class TinkerPopSingleInsertionNeo4j extends TinkerPopSingleInsertionBase {
-    public TinkerPopSingleInsertionNeo4j(Graph graph, File resultsPath) {
-        super(graph, GraphDatabaseType.TINKERPOP_NEO4J, resultsPath);
+    public TinkerPopSingleInsertionNeo4j(Graph graph, GraphDatabaseType type, File resultsPath) {
+        super(graph, type, resultsPath);
     }
 }

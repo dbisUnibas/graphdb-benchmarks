@@ -17,7 +17,7 @@ import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
 public abstract class TinkerPopBase extends GraphDatabaseBase<Iterator<Vertex>, Iterator<Edge>, Vertex, Edge> {
     Graph graph;
-    private int numEdgeIterators = 0; //to track wheter it is safe to commit
+    private int numEdgeIterators = 0; //to track whether it is safe to commit
     private int numVertexIterators = 0;
 
     public TinkerPopBase(GraphDatabaseType type, File dbStorageDirectory) {

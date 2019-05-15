@@ -160,9 +160,11 @@ public class Utils {
         } else if ( GraphDatabaseType.SPARKSEE == type ) {
             graphDatabase = new SparkseeGraphDatabase(config, dbStorageDirectory);
         } else if ( GraphDatabaseType.TINKERPOP_NEO4J == type ) {
-            graphDatabase = new TinkerPopNeo4j(config, dbStorageDirectory);
+            graphDatabase = new TinkerPopNeo4j(config, type, dbStorageDirectory);
         } else if (GraphDatabaseType.TINKERPOP_TINKERGRAPH == type) {
             graphDatabase = new TinkerPopTinkerGraph(config, dbStorageDirectory);
+        } else if (GraphDatabaseType.TINKERPOP_NEO4J_HA == type) {
+            graphDatabase = new TinkerPopNeo4j(config, type, dbStorageDirectory);
         } else {
             // For safety, will handle the null case
             throw new IllegalArgumentException( "Unknown type: " + type == null ? "null" : type.toString() );

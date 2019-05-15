@@ -20,19 +20,48 @@ import java.io.File;
  */
 public class TinkerPopNeo4j extends TinkerPopBase {
     BenchmarkConfiguration config;
+    GraphDatabaseType type;
 
-    public TinkerPopNeo4j(BenchmarkConfiguration config, File dbStorageDirectory) {
-        super(GraphDatabaseType.TINKERPOP_NEO4J, dbStorageDirectory);
+    public TinkerPopNeo4j(BenchmarkConfiguration config, GraphDatabaseType type, File dbStorageDirectory) {
+        super(type, dbStorageDirectory);
         this.config = config;
+        this.type = type;
     }
+
+    private Configuration getSingleConfig() {
+        Configuration config = new BaseConfiguration();
+        config.addProperty(Neo4jGraph.CONFIG_DIRECTORY, dbStorageDirectory.toString());
+        return config;
+    }
+
+    private Configuration getHAConfig() {
+        Configuration config = new BaseConfiguration();
+        config.addProperty(Neo4jGraph.CONFIG_DIRECTORY, dbStorageDirectory.toString());
+        config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.server_id", "1");
+        config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.initial_hosts", "node1:5001\\,node2:5001\\,node3:5001");
+        config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.host.coordination", "node1:5001");
+        config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.host.data", "node1:6001");
+        return config; //todo how to set the port of this server? Is it the coordination property?
+        // need to manually set up other nodes...
+    }
+
+    // according to https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/
+    // it's not possible to run causal cluster in embedded mode...
+    // will need to set up gremlin server that then connects to non-embedded Neo4j. How to do that??
 
     @Override
     public void open() {
         if (graph != null) {
             return; //already open
         }
-        Configuration config = new BaseConfiguration();
-        config.addProperty(Neo4jGraph.CONFIG_DIRECTORY, dbStorageDirectory.toString());
+        Configuration config;
+
+        if (this.type == GraphDatabaseType.TINKERPOP_NEO4J_HA) {
+            config = getHAConfig();
+        } else {
+            config = getSingleConfig();
+        }
+
         graph = Neo4jGraph.open(config);
     }
 
@@ -49,14 +78,14 @@ public class TinkerPopNeo4j extends TinkerPopBase {
 
     @Override
     public void massiveModeLoading(File dataPath) {
-        TinkerPopMassiveInsertionNeo4j ins = new TinkerPopMassiveInsertionNeo4j(graph, null);
+        TinkerPopMassiveInsertionNeo4j ins = new TinkerPopMassiveInsertionNeo4j(graph, type,null);
         ins.createGraph(dataPath, 0); // what's with these parameters? not needed here?
         graph.tx().commit();
     }
 
     @Override
     public void singleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
-        TinkerPopSingleInsertionNeo4j ins = new TinkerPopSingleInsertionNeo4j(graph, resultsPath);
+        TinkerPopSingleInsertionNeo4j ins = new TinkerPopSingleInsertionNeo4j(graph, type, resultsPath);
         ins.createGraph(dataPath, scenarioNumber);
         graph.tx().commit();
     }
@@ -88,7 +117,6 @@ public class TinkerPopNeo4j extends TinkerPopBase {
 
     @Override
     public void delete() {
-        System.out.println("Deleting DB");
         Utils.deleteRecursively( dbStorageDirectory );
     }
 
