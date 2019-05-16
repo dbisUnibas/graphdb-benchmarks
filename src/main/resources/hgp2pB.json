@@ -1,16 +1,22 @@
 {
-  "interfaceType"    : "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
-  "localDB": "/tmp/hgdbpeertest",
-  "peerName"    : "HGDBPeer",
-  "bootstrap" : [ {"class" : "org.hypergraphdb.peer.bootstrap.AffirmIdentityBootstrap", "config" : {}},
-    {"class" : "org.hypergraphdb.peer.bootstrap.CACTBootstrap", "config" : {}}] ,
-  "interfaceConfig"        :
-  {
-    "user" : "a1",
-    "password" : "a",
-    "serverUrl"    : "10.34.58.192",
-    "room" : "room1@conference.10.34.58.192",
-    "autoRegister" : true
+  "interfaceType": "org.hypergraphdb.peer.xmpp.XMPPPeerInterface",
+  "localDB": "/tmp/hgdb_a1",
+  "peerName": "HGDBPeer",
+  "bootstrap": [
+    {
+      "class": "org.hypergraphdb.peer.bootstrap.AffirmIdentityBootstrap",
+      "config": {}
+    },
+    {
+      "class": "org.hypergraphdb.peer.bootstrap.CACTBootstrap",
+      "config": {}
+    }
+  ],
+  "interfaceConfig": {
+    "user": "a1",
+    "password": "a1",
+    "serverUrl": "10.34.58.115",
+    "autoRegister": true
   }
 }
 

@@ -9,6 +9,7 @@ import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRel;
+import org.hypergraphdb.indexing.ByPartIndexer;
 
 import java.io.File;
 
@@ -31,7 +32,9 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
 
     public HGHandle getOrCreate( String nodeId ) {
         Node n = new Node(Integer.parseInt(nodeId), 0,0);
-        return HGQuery.hg.assertAtom(hyperGraph, n, nodeHandleType);
+        HGHandle handle = HGQuery.hg.assertAtom(hyperGraph, n, nodeHandleType);
+        index();
+        return handle;
     }
 
     @Override
@@ -40,5 +43,13 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
                 new HGRel(src, dest),
                 RelTypeSimilar.getHGRelType(hyperGraph)
         );
+    }
+
+    public void index(){
+        HGHandle bTypeH = hyperGraph.getTypeSystem().getTypeHandle(Node.class);
+        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "id"));
+        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "community"));
+        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "communityNode"));
+        hyperGraph.runMaintenance();
     }
 }

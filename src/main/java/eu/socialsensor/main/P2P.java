@@ -1,67 +1,91 @@
 package eu.socialsensor.main;
 
+import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
+import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.peer.HGPeerIdentity;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.cact.DefineAtom;
+import org.hypergraphdb.peer.cact.QueryCount;
+import org.hypergraphdb.util.HGUtils;
 
 import java.io.File;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class P2P {
 
-  public static void main(String[] args){
-    // Let's startup our two peers.
-    HyperGraphPeer peer1 = startPeer(new File("/home/ubuntu/hgp2pA.json"));
-    HyperGraphPeer peer2 = startPeer(new File("/home/ubuntu/hgp2pB.json"));
+  public static void main(String[] args) throws InterruptedException {
+    HyperGraphPeer peer;
+    File config =  new File("/home/fp/Repositories/graphdb-benchmarks/src/main/resources/hgp2pB.json");
+    peer = P2P.startPeer(config);
 
-    // Add some atom to the graph of the first peer.
-    HGHandle fromPeer1 = peer1.getGraph().add("From Peer1");
+    while (peer.getConnectedPeers().isEmpty())
+      Thread.sleep(500);
 
-    // Have our first peer initiate a "define-atom" activity which
-    // will trigger a "HyperGraph.define" operation with the specified
-    // atom at the other peer.
-    //
-    // The DefineAtom constructor takes the initiating peer as its
-    // first argument, the handle of the atom to be send as its second
-    // argument and the identity of the receiving peer.
-    //
-    // The the newly constructed activity is passed onto the ActivityManager's
-    // initiate method which will take it from there.
-    HGPeerIdentity pid2 =  peer2.getIdentity();
-    peer1.getActivityManager().initiateActivity(
-            new DefineAtom(peer1, fromPeer1, pid2));
+    System.out.println("Connected peers to " + peer.getConfiguration().at("interfaceConfig").at("user"));
+    peer.getConnectedPeers().forEach(System.out::println);
+    Node n = new Node(1, 1,1);
+    HGHandle testHandle = peer.getGraph().add(n);
+
+    peer.getConnectedPeers().forEach(id -> peer.getActivityManager().initiateActivity(
+            new DefineAtom(peer, testHandle, id),
+            result -> {
+              System.out.println("Activity " + result.getActivity().getId() + " finished.");
+
+              if (result.getException() != null)
+                System.out.println("With exception: " + result.getException());
+            }));
+
 
     // 2 seconds should be enough in a single machine to transfer the atom
     try { Thread.sleep(2000); } catch (Throwable t) { }
 
-    // Let's check that the atom was properly transferred.
-    String received = peer2.getGraph().get(fromPeer1);
-    if (received != null)
-      System.out.println("Peer 2 received " + received);
-    else
-      System.out.println("Peer 2 failed to receive anything.");
+    peer.getConnectedPeers().forEach(id ->
+            peer.getActivityManager().initiateActivity(
+                    new QueryCount(peer, NodeQueries.nodeType(), id),
+                    result -> {
+              System.out.println("Activity " + result.getActivity().getId() + " finished.");
+                      System.out.println(((QueryCount)result.getActivity()).getResult());
+              if (result.getException() != null)
+                System.out.println("With exception: " + result.getException());
+            }));
+
+    Long count =  peer.getConnectedPeers().stream().map(id -> peer.getActivityManager().initiateActivity(new QueryCount(peer, NodeQueries.nodeType(), id)))
+            .map(activityResultFuture -> {
+                try {
+                    return activityResultFuture.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }).filter(Objects::nonNull)
+            .map(a -> (QueryCount) a.getActivity())
+            .map(QueryCount::getResult).reduce((a, b) -> a + b).get();
+
+    System.out.println(count);
+    Thread.sleep(5000);
+
+
+    while (true)
+      try { Thread.sleep(5000); } catch (InterruptedException ex) { break; }
+
   }
 
-
-  // Start a peer out of a given configuration file. This will have as a side
-// effect to open the underlying database if not already opened, execute
-// all bootstrapping operations found in the configuration and connect to
-// the network.
-  private static HyperGraphPeer startPeer(File configFile) {
-    HyperGraphPeer peer = new HyperGraphPeer(configFile);
+  static HyperGraphPeer startPeer(File config) {
+    HyperGraphPeer peer = new HyperGraphPeer(config);
     Future<Boolean> startupResult = peer.start();
     try {
       if (startupResult.get()) {
-        System.out.println("Peer started successfully.");
-        return peer;
+        System.out.println("Peer " + peer.getConfiguration().at("peerName") + " started successfully.");
       } else {
         System.out.println("Peer failed to start.");
-        peer.getStartupFailedException().printStackTrace(System.err);
+        HGUtils.throwRuntimeException(peer.getStartupFailedException());
       }
     } catch (Exception e) {
-      e.printStackTrace(System.err);
+      peer.stop();
+      throw new RuntimeException(e);
     }
-    return  null;
+    return peer;
   }
 }
