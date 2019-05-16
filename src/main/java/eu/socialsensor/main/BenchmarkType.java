@@ -11,6 +11,7 @@ import java.util.Set;
 public enum BenchmarkType {
     MASSIVE_INSERTION( "Massive Insertion", "MassiveInsertion" ),
     SINGLE_INSERTION( "Single Insertion", "SingleInsertion" ),
+    DISTRIBUTED_SINGLE_INSERTION( "Distributed Single Insertion", "DistributedSingleInsertion" ),
     DELETION( "Delete Graph", "DeleteGraph" ),
     FIND_NEIGHBOURS( "Find Neighbours of All Nodes", "FindNeighbours" ),
     FIND_ADJACENT_NODES( "Find Adjacent Nodes of All Edges", "FindAdjacent" ),

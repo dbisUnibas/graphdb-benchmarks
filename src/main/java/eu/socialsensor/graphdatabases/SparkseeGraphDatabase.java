@@ -111,6 +111,11 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
 
     }
 
+    @Override
+    public void createGraphForDistributedSingleLoad() {
+
+    }
+
 
     @Override
     public void createGraphForMassiveLoad() {
@@ -150,6 +155,11 @@ public class SparkseeGraphDatabase extends GraphDatabaseBase<ObjectsIterator, Ob
     public void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber ) {
         Insertion sparkseeSingleInsertion = new SparkseeSingleInsertion( this.session, resultsPath );
         sparkseeSingleInsertion.createGraph( dataPath, scenarioNumber );
+    }
+
+    @Override
+    public void distributedSingleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
+
     }
 
 

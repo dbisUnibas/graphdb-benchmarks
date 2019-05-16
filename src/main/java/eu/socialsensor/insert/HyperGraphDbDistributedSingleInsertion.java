@@ -1,10 +1,9 @@
-package eu.socialsensor.distributed.insert;
+package eu.socialsensor.insert;
 
 
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
-import eu.socialsensor.insert.InsertionBase;
 import eu.socialsensor.main.GraphDatabaseType;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery;
@@ -24,14 +23,14 @@ import java.io.File;
  * @author Fabrizio Parrillo
  */
 @SuppressWarnings("deprecation")
-public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
+public class HyperGraphDbDistributedSingleInsertion extends InsertionBase<HGHandle> {
     private final HGHandle nodeHandleType;
     private final HGHandle relTypeSimilar;
 
     private final HyperGraphPeer coordinator;
     private final HyperGraph hyperGraph;
 
-    public HyperGraphdataSingleInsertion(HyperGraphPeer coordinator, File resultsPath ) {
+    public HyperGraphDbDistributedSingleInsertion(HyperGraphPeer coordinator, File resultsPath ) {
         super( GraphDatabaseType.HYPERGRAPH_DB, resultsPath );
         this.coordinator = coordinator;
         this.hyperGraph = coordinator.getGraph();

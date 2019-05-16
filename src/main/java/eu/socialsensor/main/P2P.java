@@ -9,17 +9,9 @@ import java.util.concurrent.Future;
 
 public class P2P {
 
+
   public static void main(String[] args) throws InterruptedException {
-    HyperGraphPeer peer;
-    File config =  new File("/home/fp/Repositories/graphdb-benchmarks/src/main/resources/hgp2pA.json");
-    peer = P2P.startPeer(config);
-    NodeQueries.addIndex(peer.getGraph());
-    while (peer.getConnectedPeers().isEmpty())
-      Thread.sleep(500);
-
-    System.out.println("Connected peers to " + peer.getConfiguration().at("interfaceConfig").at("user"));
-    peer.getConnectedPeers().forEach(System.out::println);
-
+    HyperGraphPeer peer = getPeer();
     while (true)
       try {
         Thread.sleep(5000);
@@ -28,7 +20,7 @@ public class P2P {
 
   }
 
-  static HyperGraphPeer startPeer(File config) {
+  private static HyperGraphPeer startPeer(File config) {
     HyperGraphPeer peer = new HyperGraphPeer(config);
     Future<Boolean> startupResult = peer.start();
     try {
@@ -43,5 +35,18 @@ public class P2P {
       throw new RuntimeException(e);
     }
     return peer;
+  }
+
+  public static HyperGraphPeer getPeer() throws InterruptedException {
+    HyperGraphPeer peer;
+    File config =  new File("/home/fp/Repositories/graphdb-benchmarks/src/main/resources/hgp2pA.json");
+    peer = P2P.startPeer(config);
+    NodeQueries.addIndex(peer.getGraph());
+    while (peer.getConnectedPeers().isEmpty())
+      Thread.sleep(500);
+
+    System.out.println("Connected peers to " + peer.getConfiguration().at("interfaceConfig").at("user"));
+    peer.getConnectedPeers().forEach(System.out::println);
+    return  peer;
   }
 }

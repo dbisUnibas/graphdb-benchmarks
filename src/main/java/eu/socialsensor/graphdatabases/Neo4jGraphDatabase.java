@@ -85,6 +85,11 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
         }
     }
 
+    @Override
+    public void createGraphForDistributedSingleLoad() {
+
+    }
+
 
     @Override
     public void createGraphForMassiveLoad() {
@@ -112,6 +117,11 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
     public void singleModeLoading( File dataset, File resultsPath, int scenarioNumber ) {
         Insertion neo4jSingleInsertion = new Neo4jSingleInsertion( this.neo4jGraph, resultsPath );
         neo4jSingleInsertion.createGraph( dataset, scenarioNumber );
+    }
+
+    @Override
+    public void distributedSingleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
+
     }
 
 

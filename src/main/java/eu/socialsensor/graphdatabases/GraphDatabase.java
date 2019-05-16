@@ -58,7 +58,12 @@ public interface GraphDatabase<VertexIteratorType, EdgeIteratorType, VertexType,
 		* Creates a graph database and configures for single data insertion
 		*/
 	void createGraphForSingleLoad();
-	
+
+	/**
+	 * Creates a graph database and configures for single data insertion
+	 */
+	void createGraphForDistributedSingleLoad();
+
 	/**
 		* Inserts data in massive mode
 		*
@@ -72,7 +77,14 @@ public interface GraphDatabase<VertexIteratorType, EdgeIteratorType, VertexType,
 		* @param dataPath - dataset path
 		*/
 	void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber );
-	
+
+	/**
+	 * Distributed inserts data in single mode
+	 *
+	 * @param dataPath - dataset path
+	 */
+	void distributedSingleModeLoading( File dataPath, File resultsPath, int scenarioNumber );
+
 	/**
 		* Creates a graph database and configures for bulk data insertion
 		*/

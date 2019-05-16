@@ -6,11 +6,13 @@ import eu.socialsensor.graphdatabases.GraphDatabaseBase;
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
+import eu.socialsensor.insert.HyperGraphDbDistributedSingleInsertion;
 import eu.socialsensor.insert.HyperGraphMassiveInsertion;
 import eu.socialsensor.insert.HyperGraphdataSingleInsertion;
 import eu.socialsensor.insert.Insertion;
 import eu.socialsensor.main.BenchmarkConfiguration;
 import eu.socialsensor.main.GraphDatabaseType;
+import eu.socialsensor.main.P2P;
 import eu.socialsensor.utils.Utils;
 import org.hypergraphdb.HGConfiguration;
 import org.hypergraphdb.HGEnvironment;
@@ -21,6 +23,7 @@ import org.hypergraphdb.algorithms.DefaultALGenerator;
 import org.hypergraphdb.algorithms.GraphClassics;
 import org.hypergraphdb.algorithms.HGALGenerator;
 import org.hypergraphdb.atom.HGRel;
+import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.query.HGQueryCondition;
 import org.hypergraphdb.storage.bje.BJEConfig;
 
@@ -44,7 +47,7 @@ public class HyperGraphDatabase
             > {
 
   protected HyperGraph graph = null;
-
+  protected HyperGraphPeer peer = null;
   public HyperGraphDatabase(
       BenchmarkConfiguration config,
       File dbStorageDirectory
@@ -181,6 +184,16 @@ public class HyperGraphDatabase
   }
 
   @Override
+  public void createGraphForDistributedSingleLoad() {
+    try {
+      this.peer = P2P.getPeer();
+      this.graph = peer.getGraph();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Override
   public void massiveModeLoading(File dataPath) {
     Insertion insertion = new HyperGraphMassiveInsertion(graph);
     insertion.createGraph(dataPath, 0);
@@ -190,6 +203,13 @@ public class HyperGraphDatabase
   public void singleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
     Insertion insertion = new HyperGraphdataSingleInsertion(graph, resultsPath);
     insertion.createGraph(dataPath, scenarioNumber);
+  }
+
+  @Override
+  public void distributedSingleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
+    Insertion insertion = new HyperGraphDbDistributedSingleInsertion(peer, resultsPath);
+    insertion.createGraph(dataPath, scenarioNumber);
+
   }
 
   @Override
