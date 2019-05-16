@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         // Shadowing; used to make a fat jar
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
@@ -84,7 +84,7 @@ dependencies {
 
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.1'
-	  compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
 	
     compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.1'
@@ -108,10 +108,10 @@ dependencies {
     compile group: 'com.sleepycat', name: 'je', version:'5.0.73'
     compile group: 'net.java.dev.jna', name: 'jna', version:'4.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-core', version:'3.6.2'
-    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'2.1.8'
-    compile group: 'org.neo4j', name: 'neo4j', version:'2.1.8'
-    compile(group: 'com.tinkerpop.blueprints', name: 'blueprints-neo4j2-graph', version:'2.6.0') { exclude(module: 'logback-classic') }
-    compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version:'2.2.5'
+    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'3.5.4'
+    compile group: 'org.neo4j', name: 'neo4j', version:'3.5.4'
+    compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version: '3.0.18'
+    compile group: 'com.tinkerpop.blueprints', name: 'blueprints-orient-graph', version: '2.4.0'
     compile group: 'com.tinkerpop', name: 'pipes', version:'2.6.0'
     compile group: 'org.iq80.snappy', name: 'snappy', version:'0.3'
     compile group: 'com.spatial4j', name: 'spatial4j', version:'0.3'
@@ -130,6 +130,7 @@ dependencies {
 
 
 jar {
+    exclude('data/**')
     manifest {
         attributes "Manifest-Version": "1.0"
         attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
@@ -159,6 +160,4 @@ javadoc {
 }
 
 
-tasks.withType(Test)  {
-    maxParallelForks = 1
-}
+

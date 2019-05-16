@@ -65,7 +65,7 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     @SuppressWarnings("deprecation")
     @Override
     public void createGraphForSingleLoad() {
-        OGlobalConfiguration.STORAGE_KEEP_OPEN.setValue( false );
+
         graph = getGraph( dbStorageDirectory );
         createSchema();
     }
@@ -79,7 +79,6 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     @SuppressWarnings("deprecation")
     @Override
     public void createGraphForMassiveLoad() {
-        OGlobalConfiguration.STORAGE_KEEP_OPEN.setValue( false );
         graph = getGraph( dbStorageDirectory );
         createSchema();
     }
