@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 
 public class P2P {
 
+  static String config = "/home/ubuntu/peerConfig.json";
 
   public static void main(String[] args) throws InterruptedException {
     HyperGraphPeer peer = getPeer();
@@ -39,7 +40,7 @@ public class P2P {
 
   public static HyperGraphPeer getPeer() throws InterruptedException {
     HyperGraphPeer peer;
-    File config =  new File("/home/fp/Repositories/graphdb-benchmarks/src/main/resources/hgp2pA.json");
+    File config =  new File(P2P.config);
     peer = P2P.startPeer(config);
     NodeQueries.addIndex(peer.getGraph());
     while (peer.getConnectedPeers().isEmpty())
