@@ -5,7 +5,6 @@ import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.peer.HyperGraphPeer;
 import org.hypergraphdb.peer.cact.QueryCount;
-import org.hypergraphdb.peer.replication.Replication;
 import org.hypergraphdb.util.HGUtils;
 
 import java.io.File;
@@ -28,8 +27,6 @@ public class P2P {
     Node n = new Node(1, 1,1);
     HGHandle testHandle = peer.getGraph().add(n);
 
-    Replication r = new Replication(peer);
-    r.catchUp();
     // 2 seconds should be enough in a single machine to transfer the atom
     try { Thread.sleep(2000); } catch (Throwable t) { }
 

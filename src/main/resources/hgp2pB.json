@@ -10,6 +10,10 @@
     {
       "class": "org.hypergraphdb.peer.bootstrap.CACTBootstrap",
       "config": {}
+    },
+    {
+      "class": "org.hypergraphdb.peer.bootstrap.ReplicationBootstrap",
+      "config": {}
     }
   ],
   "interfaceConfig": {
