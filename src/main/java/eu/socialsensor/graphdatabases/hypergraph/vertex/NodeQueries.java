@@ -3,6 +3,7 @@ package eu.socialsensor.graphdatabases.hypergraph.vertex;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HGQuery.hg;
 import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.indexing.ByPartIndexer;
 import org.hypergraphdb.query.AtomTypeCondition;
 import org.hypergraphdb.query.HGQueryCondition;
 
@@ -28,5 +29,12 @@ public class NodeQueries {
 
   public static HGHandle getNodeTypeHandle(HyperGraph graph) {
     return graph.getTypeSystem().getTypeHandle(Node.class);
+  }
+
+  public static void addIndex(HyperGraph hyperGraph) {
+    HGHandle bTypeH = hyperGraph.getTypeSystem().getTypeHandle(Node.class);
+    hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "id"));
+    hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "community"));
+    hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "communityNode"));
   }
 }

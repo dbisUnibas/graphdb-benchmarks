@@ -3,15 +3,13 @@ package eu.socialsensor.insert;
 
 import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
+import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.main.GraphDatabaseType;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.hypergraphdb.HGHandle;
 import org.hypergraphdb.HyperGraph;
 import org.hypergraphdb.atom.HGRel;
+
+import java.util.*;
 
 
 /**
@@ -32,6 +30,7 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
   protected void post() {
     batchImportNodes();
     batchImportRelationships();
+    hyperGraph.runMaintenance();
   }
 
   public HyperGraphMassiveInsertion(
@@ -39,6 +38,7 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
   ) {
     super(GraphDatabaseType.HYPERGRAPH_DB, null);
     this.hyperGraph = hyperGraph;
+    NodeQueries.addIndex(hyperGraph);
   }
 
   @Override

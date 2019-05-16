@@ -7,16 +7,13 @@ import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.insert.InsertionBase;
 import eu.socialsensor.main.GraphDatabaseType;
 import org.hypergraphdb.HGHandle;
-import org.hypergraphdb.peer.HGPeerIdentity;
+import org.hypergraphdb.HGQuery;
+import org.hypergraphdb.HyperGraph;
+import org.hypergraphdb.atom.HGRel;
 import org.hypergraphdb.peer.HyperGraphPeer;
-import org.hypergraphdb.peer.cact.AddAtom;
-import org.hypergraphdb.peer.workflow.ActivityResult;
+import org.hypergraphdb.peer.cact.ReplaceAtom;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 
 /**
@@ -32,57 +29,56 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
     private final HGHandle relTypeSimilar;
 
     private final HyperGraphPeer coordinator;
-    private final Map<Integer, HGPeerIdentity> peers;
+    private final HyperGraph hyperGraph;
 
     public HyperGraphdataSingleInsertion(HyperGraphPeer coordinator, File resultsPath ) {
         super( GraphDatabaseType.HYPERGRAPH_DB, resultsPath );
         this.coordinator = coordinator;
-        this.nodeHandleType = NodeQueries.getNodeTypeHandle(coordinator.getGraph());
-        this.relTypeSimilar =  RelTypeSimilar.getHGRelType(coordinator.getGraph());
-
-        this.peers = new HashMap<>();
-        this.peers.put(0, coordinator.getIdentity());
-        for (HGPeerIdentity connectedPeer : coordinator.getConnectedPeers()) {
-            int id = peers.size() + 1;
-            this.peers.put(id, connectedPeer);
-        }
+        this.hyperGraph = coordinator.getGraph();
+        this.nodeHandleType = NodeQueries.getNodeTypeHandle(hyperGraph);
+        this.relTypeSimilar =  RelTypeSimilar.getHGRelType(hyperGraph);
+        NodeQueries.addIndex(hyperGraph);
     }
 
     public HGHandle getOrCreate( String nodeId ) {
-       Node n = new Node(Integer.parseInt(nodeId), 0,0);
-
-       int peerId = Integer.parseInt(nodeId) % this.peers.size();
-       Future<ActivityResult> result = coordinator.getActivityManager().initiateActivity(
-            new AddAtom(coordinator, n, peers.get(peerId))
-       );
-
-        AddAtom addAtomResult = null;
-        try {
-            addAtomResult = (AddAtom) result.get().getActivity();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        index(); // Todo: add workflow
-        return addAtomResult.getAtomHandle();
+        Node n = new Node(Integer.parseInt(nodeId), 0,0);
+        HGHandle handle = HGQuery.hg.assertAtom(coordinator.getGraph(), n, nodeHandleType);
+        this.replicate(handle, n);
+        hyperGraph.runMaintenance(); // indexing
+        return handle;
     }
 
     @Override
     public void relateNodes( HGHandle src, HGHandle dest ) {
-/*
-        Future<ActivityResult> result = coordinator.getActivityManager().initiateActivity(
-                new GetAtom(coordinator, n, peers.get(peerId))
+        HGRel rel = new HGRel(
+                src,
+                dest
         );
-        hyperGraph.add(
-                new HGRel(src, dest),
-
-        );*/
+        HGHandle handle = hyperGraph.add(
+                rel,
+                RelTypeSimilar.getHGRelType(hyperGraph)
+        );
+        this.replicate(handle, rel);
     }
 
-    public void index(){
-/*        HGHandle bTypeH = hyperGraph.getTypeSystem().getTypeHandle(Node.class);
-        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "id"));
-        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "community"));
-        hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "communityNode"));
-        hyperGraph.runMaintenance();*/
+    private void replicate(HGHandle nodeHandle, Node node ){
+        this.coordinator.getConnectedPeers().stream()
+                .map(id -> new ReplaceAtom(coordinator, nodeHandle, node, this.nodeHandleType,  id))
+                .map(replaceActivity ->
+                        this.coordinator
+                                .getActivityManager()
+                                .initiateActivity(replaceActivity)
+                );
+    }
+
+    private void replicate(HGHandle relHandle, HGRel rel ){
+        this.coordinator.getConnectedPeers().stream()
+                .map(id -> new ReplaceAtom(coordinator, relHandle, rel, this.nodeHandleType,  id))
+                .map(replaceActivity ->
+                        this.coordinator
+                                .getActivityManager()
+                                .initiateActivity(replaceActivity)
+                );
+
     }
 }
