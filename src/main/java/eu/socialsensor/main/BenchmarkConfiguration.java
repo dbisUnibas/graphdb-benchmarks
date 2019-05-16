@@ -219,12 +219,16 @@ public class BenchmarkConfiguration {
         //randomNodes = Integer.parseInt( settings.get( "shortestPathRandomNodes" ) );
         randomNodes = 100;
 
+
         // ---- Settings from Chronos ----
 
         benchmarkTypes = new ArrayList<>();
+
+        // Insertion Workload
+        benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "insertionWorkload" ) ) );
+
         if (settings.get("type").equals( "real" )) {
             // Benchmark Types
-            benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "insertionWorkload" ) ) );
             benchmarkTypes.add( BenchmarkType.valueOf( settings.get( "queryWorkload" ) ) );
 
             // Dataset

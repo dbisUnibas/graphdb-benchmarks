@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         // Shadowing; used to make a fat jar
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 
@@ -41,7 +41,7 @@ version = '1.0'
 
 description = "Graph DB Benchmarking Client"
 
-mainClassName = "eu.socialsensor.main.GraphDatabaseBenchmark"
+mainClassName = "eu.socialsensor.main.App"
 
 
 compileJava.options.encoding = 'UTF-8'
@@ -77,10 +77,10 @@ dependencies {
 
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.1'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.1'
-	compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.7.5'
 	
-    compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.0'
+    compile group: 'ch.unibas.dmi.dbis.chronos', name: 'chronos-agent', version: '2.2.1'
     compile group: 'com.github.rvesse', name: 'airline', version: '2.2.0'
 	
     compile group: 'org.antlr', name: 'antlr-runtime', version:'3.2'
@@ -118,6 +118,7 @@ dependencies {
 
 
 jar {
+    exclude('data/**')
     manifest {
         attributes "Manifest-Version": "1.0"
         attributes "Copyright": "Databases and Information Systems Group, Department Mathematics and Computer Science, University of Basel, Switzerland"
@@ -145,5 +146,7 @@ artifacts {
 javadoc {
     failOnError = false
 }
+
+
 
 
