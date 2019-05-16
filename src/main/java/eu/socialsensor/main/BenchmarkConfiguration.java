@@ -290,7 +290,7 @@ public class BenchmarkConfiguration {
     private static File validateReadableFile( String fileName, String fileType ) {
         File file = new File( fileName );
         if ( !file.exists() ) {
-            throw new IllegalArgumentException( String.format( "the %s does not exist: " + fileName, fileType ) );
+            throw new IllegalArgumentException( String.format( "the %s does not exist: " + file.getAbsolutePath(), fileType ) );
         }
 
         if ( !(file.isFile() && file.canRead()) ) {
