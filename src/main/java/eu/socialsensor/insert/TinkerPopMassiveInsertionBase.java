@@ -16,7 +16,15 @@ public abstract class TinkerPopMassiveInsertionBase extends InsertionBase<Vertex
     Map<Integer, Vertex> cache = new HashMap<>();
     Graph myGraph;
     public static final String NODE_LABEL = "Node";
+    long numInserted;
 
+    static final int COMMIT_EVERY = 100000;
+
+    void commit() {
+        if (myGraph.features().graph().supportsTransactions()) {
+            myGraph.tx().commit();
+        }
+    }
 
     public TinkerPopMassiveInsertionBase(Graph graph, GraphDatabaseType type, File resultsPath) {
         super(type, resultsPath);
@@ -32,6 +40,10 @@ public abstract class TinkerPopMassiveInsertionBase extends InsertionBase<Vertex
         } else {
             v = myGraph.addVertex(T.label, NODE_LABEL, NODE_ID, val);
             cache.put(val, v);
+            numInserted++;
+            if (numInserted % COMMIT_EVERY == 0) {
+                commit();
+            }
             return v;
         }
     }
