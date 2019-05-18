@@ -35,7 +35,13 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
         // apparently framework doesn't do this? huh?
         delete();
         open();
+        createIndexes();
+    }
+
+    private void createIndexes() {
         ((TinkerGraph) graph).createIndex(NODE_ID, Vertex.class); // index is essential for insert speed!
+        ((TinkerGraph) graph).createIndex(COMMUNITY, Vertex.class);
+        ((TinkerGraph) graph).createIndex(NODE_COMMUNITY, Vertex.class);
     }
 
     @Override
@@ -57,7 +63,7 @@ public class TinkerPopTinkerGraph extends TinkerPopBase {
         // apparently framework doesn't do this? huh?
         delete();
         open();
-        ((TinkerGraph) graph).createIndex(NODE_ID, Vertex.class); // index is essential for insert speed!
+        createIndexes();
     }
 
     @Override

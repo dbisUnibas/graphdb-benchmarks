@@ -1,5 +1,6 @@
 package eu.socialsensor.graphdatabases;
 
+import eu.socialsensor.insert.TinkerPopMassiveInsertionBase;
 import eu.socialsensor.insert.TinkerPopMassiveInsertionNeo4j;
 import eu.socialsensor.insert.TinkerPopSingleInsertionBase;
 import eu.socialsensor.insert.TinkerPopSingleInsertionNeo4j;
@@ -72,8 +73,17 @@ public class TinkerPopNeo4j extends TinkerPopBase {
         delete();
         open();
         // we can only create indexes via cypher... or directly java API. Not gremlin
-        ((Neo4jGraph) graph).cypher(String.format("CREATE INDEX ON :%s(%s)", TinkerPopSingleInsertionBase.NODE_LABEL, NODE_ID));
+        createIndexes();
         graph.tx().commit();
+    }
+
+    private void createIndexes() {
+        ((Neo4jGraph) graph).cypher(String.format("CREATE INDEX ON :%s(%s)",
+                TinkerPopMassiveInsertionBase.NODE_LABEL, NODE_ID));
+        ((Neo4jGraph) graph).cypher(String.format("CREATE INDEX ON :%s(%s)",
+                TinkerPopMassiveInsertionBase.NODE_LABEL, COMMUNITY));
+        ((Neo4jGraph) graph).cypher(String.format("CREATE INDEX ON :%s(%s)",
+                TinkerPopMassiveInsertionBase.NODE_LABEL, NODE_COMMUNITY));
     }
 
     @Override
@@ -96,7 +106,7 @@ public class TinkerPopNeo4j extends TinkerPopBase {
         shutdown();
         delete();
         open();
-        ((Neo4jGraph) graph).cypher(String.format("CREATE INDEX ON :%s(%s)", TinkerPopSingleInsertionBase.NODE_LABEL, NODE_ID));
+        createIndexes();
         graph.tx().commit();
     }
 
