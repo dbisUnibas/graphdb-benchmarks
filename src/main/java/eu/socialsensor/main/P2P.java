@@ -43,8 +43,7 @@ public class P2P {
     File config =  new File(P2P.config);
     peer = P2P.startPeer(config);
     NodeQueries.addIndex(peer.getGraph());
-    while (peer.getConnectedPeers().isEmpty())
-      Thread.sleep(500);
+    while (peer.getConnectedPeers().isEmpty()) Thread.sleep(500);
 
     System.out.println("Connected peers to " + peer.getConfiguration().at("interfaceConfig").at("user"));
     peer.getConnectedPeers().forEach(System.out::println);

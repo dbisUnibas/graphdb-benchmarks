@@ -30,6 +30,7 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
   protected void post() {
     batchImportNodes();
     batchImportRelationships();
+    NodeQueries.addIndex(hyperGraph);
     hyperGraph.runMaintenance();
   }
 
@@ -38,7 +39,6 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
   ) {
     super(GraphDatabaseType.HYPERGRAPH_DB, null);
     this.hyperGraph = hyperGraph;
-    NodeQueries.addIndex(hyperGraph);
   }
 
   @Override

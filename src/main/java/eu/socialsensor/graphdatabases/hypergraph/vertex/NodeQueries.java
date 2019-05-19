@@ -35,6 +35,6 @@ public class NodeQueries {
     HGHandle bTypeH = hyperGraph.getTypeSystem().getTypeHandle(Node.class);
     hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "id"));
     hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "community"));
-    hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "communityNode"));
+    hyperGraph.getIndexManager().register(new ByPartIndexer(bTypeH, "nodeCommunity"));
   }
 }

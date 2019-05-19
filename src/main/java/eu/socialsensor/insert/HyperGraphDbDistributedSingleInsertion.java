@@ -36,13 +36,13 @@ public class HyperGraphDbDistributedSingleInsertion extends InsertionBase<HGHand
         this.hyperGraph = coordinator.getGraph();
         this.nodeHandleType = NodeQueries.getNodeTypeHandle(hyperGraph);
         this.relTypeSimilar =  RelTypeSimilar.getHGRelType(hyperGraph);
-        NodeQueries.addIndex(hyperGraph);
     }
 
     public HGHandle getOrCreate( String nodeId ) {
         Node n = new Node(Integer.parseInt(nodeId), 0,0);
         HGHandle handle = HGQuery.hg.assertAtom(coordinator.getGraph(), n, nodeHandleType);
         this.replicate(handle, n);
+        NodeQueries.addIndex(hyperGraph);
         hyperGraph.runMaintenance(); // indexing
         return handle;
     }

@@ -27,12 +27,12 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
         super( GraphDatabaseType.HYPERGRAPH_DB, resultsPath );
         this.hyperGraph = hyperGraph;
         this.nodeHandleType = NodeQueries.getNodeTypeHandle(hyperGraph);
-        NodeQueries.addIndex(hyperGraph);
     }
 
     public HGHandle getOrCreate( String nodeId ) {
         Node n = new Node(Integer.parseInt(nodeId), 0,0);
         HGHandle handle = HGQuery.hg.assertAtom(hyperGraph, n, nodeHandleType);
+        NodeQueries.addIndex(hyperGraph);
         hyperGraph.runMaintenance();
         return handle;
     }
