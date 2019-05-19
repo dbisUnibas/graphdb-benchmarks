@@ -1,7 +1,7 @@
 package eu.socialsensor.insert;
 
 
-import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
+import eu.socialsensor.graphdatabases.hypergraph.hyperedge.HEIsSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.main.GraphDatabaseType;
@@ -13,12 +13,12 @@ import java.util.*;
 
 
 /**
- * Implementation of massive Insertion in Neo4j graph database
+ * Implementation of a massive insertion in HyperGraph graph database
  *
- * @author sotbeis, sotbeis@iti.gr
- * @author Alexander Patrikalakis
+ * @author fuubi, fabriparrillo@hotmail.com
+ * @author Fabrizio Parrillo
  */
-public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
+public final class HyperGraphDBMassiveInsertion extends InsertionBase<Node> {
 
   private final HyperGraph hyperGraph;
   private final List<Node> nodeBatch = new ArrayList<>();
@@ -34,7 +34,7 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
     hyperGraph.runMaintenance();
   }
 
-  public HyperGraphMassiveInsertion(
+  public HyperGraphDBMassiveInsertion(
       HyperGraph hyperGraph
   ) {
     super(GraphDatabaseType.HYPERGRAPH_DB, null);
@@ -84,7 +84,7 @@ public final class HyperGraphMassiveInsertion extends InsertionBase<Node> {
 
     hyperGraph.add(
         new HGRel(src, dest),
-        RelTypeSimilar.getHGRelType(hyperGraph)
+        HEIsSimilar.getHGRelType(hyperGraph)
     );
   }
 

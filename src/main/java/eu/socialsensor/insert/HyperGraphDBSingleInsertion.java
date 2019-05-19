@@ -1,7 +1,7 @@
 package eu.socialsensor.insert;
 
 
-import eu.socialsensor.graphdatabases.hypergraph.edge.RelTypeSimilar;
+import eu.socialsensor.graphdatabases.hypergraph.hyperedge.HEIsSimilar;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.Node;
 import eu.socialsensor.graphdatabases.hypergraph.vertex.NodeQueries;
 import eu.socialsensor.main.GraphDatabaseType;
@@ -14,16 +14,16 @@ import java.io.File;
 
 
 /**
- * Implementation of single Insertion in Hypergraph graph database
+ * Implementation of single insertion in HyperGraph graph database
  *
  * @author fuubi, fabriparrillo@hotmail.com
  * @author Fabrizio Parrillo
  */
 @SuppressWarnings("deprecation")
-public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
+public class HyperGraphDBSingleInsertion extends InsertionBase<HGHandle> {
     private final HyperGraph hyperGraph;
     private final HGHandle nodeHandleType;
-    public HyperGraphdataSingleInsertion(HyperGraph hyperGraph, File resultsPath ) {
+    public HyperGraphDBSingleInsertion(HyperGraph hyperGraph, File resultsPath ) {
         super( GraphDatabaseType.HYPERGRAPH_DB, resultsPath );
         this.hyperGraph = hyperGraph;
         this.nodeHandleType = NodeQueries.getNodeTypeHandle(hyperGraph);
@@ -41,7 +41,7 @@ public class HyperGraphdataSingleInsertion extends InsertionBase<HGHandle> {
     public void relateNodes( HGHandle src, HGHandle dest ) {
         hyperGraph.add(
                 new HGRel(src, dest),
-                RelTypeSimilar.getHGRelType(hyperGraph)
+                HEIsSimilar.getHGRelType(hyperGraph)
         );
     }
 
