@@ -42,13 +42,12 @@ public class TinkerPopNeo4j extends TinkerPopBase {
         config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.initial_hosts", "node1:5001\\,node2:5001\\,node3:5001");
         config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.host.coordination", "node1:5001");
         config.addProperty(Neo4jGraph.CONFIG_CONF + ".ha.host.data", "node1:6001");
-        return config; //todo how to set the port of this server? Is it the coordination property?
-        // need to manually set up other nodes...
+        return config;
+        // todo: refactor such that this is handled in config files!
+        // todo: implement code to start and stop the other nodes of the cluster.
+        //  currently, this needs to be done by running the jar with the `launch_HA.sh` script in the root of this repo
     }
 
-    // according to https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/
-    // it's not possible to run causal cluster in embedded mode...
-    // will need to set up gremlin server that then connects to non-embedded Neo4j. How to do that??
 
     @Override
     public void open() {
