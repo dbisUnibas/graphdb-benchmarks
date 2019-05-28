@@ -49,14 +49,8 @@ public class HyperGraphDBDistributedSingleInsertion extends InsertionBase<HGHand
 
     @Override
     public void relateNodes( HGHandle src, HGHandle dest ) {
-        HGRel rel = new HGRel(
-                src,
-                dest
-        );
-        HGHandle handle = hyperGraph.add(
-                rel,
-                HEIsSimilar.getHGRelType(hyperGraph)
-        );
+        HGRel rel = new HGRel(src, dest);
+        HGHandle handle = hyperGraph.add(rel, HEIsSimilar.getHGRelType(hyperGraph));
         this.replicate(handle, rel);
     }
 
@@ -78,6 +72,5 @@ public class HyperGraphDBDistributedSingleInsertion extends InsertionBase<HGHand
                                 .getActivityManager()
                                 .initiateActivity(replaceActivity)
                 );
-
     }
 }

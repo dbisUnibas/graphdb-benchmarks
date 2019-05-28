@@ -36,16 +36,8 @@ import java.util.stream.Collectors;
  *
  * @author Fabrizio Parrillo
  */
-public class HyperGraphDatabase
-        extends
-        GraphDatabaseBase
-                <
-                        Iterator<Node>,
-                        Iterator<HGRel>,
-                        Node,
-                        HGRel
-                        > {
-
+public class HyperGraphDatabase extends GraphDatabaseBase
+        <Iterator<Node>, Iterator<HGRel>, Node, HGRel> {
     protected HyperGraph graph = null;
     protected HyperGraphPeer peer = null;
 
@@ -95,18 +87,14 @@ public class HyperGraphDatabase
     }
 
     @Override
-    public Node getDestVertexFromEdge
-            (
-                    HGRel edge
-            ) {
+    public Node getDestVertexFromEdge(
+            HGRel edge
+    ) {
         return graph.get(edge.getTargetAt(1));
     }
 
     @Override
-    public Node getVertex
-            (
-                    Integer nodeId
-            ) {
+    public Node getVertex(Integer nodeId) {
         return graph.getOne(NodeQueries.queryById(nodeId));
     }
 
@@ -117,9 +105,7 @@ public class HyperGraphDatabase
     }
 
     @Override
-    public Iterator<HGRel> getNeighborsOfVertex(
-            Node v
-    ) {
+    public Iterator<HGRel> getNeighborsOfVertex(Node v) {
         return graph.<HGRel>getAll(
                 HEIsSimilar.getAllInAndOutNeighbors(
                         graph,
@@ -129,23 +115,17 @@ public class HyperGraphDatabase
     }
 
     @Override
-    public boolean edgeIteratorHasNext(
-            Iterator<HGRel> it
-    ) {
+    public boolean edgeIteratorHasNext(Iterator<HGRel> it) {
         return it.hasNext();
     }
 
     @Override
-    public HGRel nextEdge(
-            Iterator<HGRel> it
-    ) {
+    public HGRel nextEdge(Iterator<HGRel> it) {
         return it.next();
     }
 
     @Override
-    public void cleanupEdgeIterator(
-            Iterator<HGRel> it
-    ) {
+    public void cleanupEdgeIterator(Iterator<HGRel> it) {
     }
 
     @Override
@@ -154,23 +134,17 @@ public class HyperGraphDatabase
     }
 
     @Override
-    public boolean vertexIteratorHasNext(
-            Iterator<Node> it
-    ) {
+    public boolean vertexIteratorHasNext(Iterator<Node> it) {
         return it.hasNext();
     }
 
     @Override
-    public Node nextVertex(
-            Iterator<Node> it
-    ) {
+    public Node nextVertex(Iterator<Node> it) {
         return it.next();
     }
 
     @Override
-    public void cleanupVertexIterator(
-            Iterator<Node> it
-    ) {
+    public void cleanupVertexIterator(Iterator<Node> it) {
     }
 
     @Override
@@ -270,14 +244,15 @@ public class HyperGraphDatabase
 
     @Override
     public Set<Integer> getNeighborsIds(int nodeId) {
-        List<HGRel> neighbors = graph.getAll(
-                HEIsSimilar.getAllOutgoingNeighbors(
-                        graph,
-                        graph.findOne(NodeQueries.queryById(nodeId)
-                        )
-                )
+        HGHandle node = graph.findOne(
+                NodeQueries.queryById(nodeId)
+        );
+        HGQueryCondition condition = HEIsSimilar.getAllOutgoingNeighbors(
+                graph,
+                node
         );
 
+        List<HGRel> neighbors = graph.getAll(condition);
         return neighbors
                 .stream()
                 .map(rel -> rel.getTargetAt(1))
