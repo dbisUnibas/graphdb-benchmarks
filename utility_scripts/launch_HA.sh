@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. bashvars
+. ../bashvars
 echo "Cleaning and starting HA on ${hosts[1]}"
 ssh ubuntu@${hosts[1]} pkill java
 ssh ubuntu@${hosts[1]} rm -rf n4j/

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. bashvars
+. ../bashvars
 
 if [ $# -ne 1 ]
 then

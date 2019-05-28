@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. bashvars
+. ../bashvars
 if [ $# -ne 1 ]
 then
 echo "Specify a number from 0-4 for which host to connect"
