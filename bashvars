@@ -1,0 +1,2 @@
+hosts=('10.34.58.92' '10.34.58.93' '10.34.58.94' '10.34.58.95' '10.34.58.96')
+jarfile='graph-db-benchmarking-client-1.0-fat_git_85d39f1.jar'
