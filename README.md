@@ -1,6 +1,6 @@
 # Graph DB Benchmarking Client
 
-This graph databse benchmarking framework allows to benchmark and compare different graph databse systems. Currently the framework supports [OrientDB](http://www.orientechnologies.com/orientdb/), [Neo4j](http://neo4j.com/) and [Sparksee](http://www.sparsity-technologies.com/).
+This graph databse benchmarking framework allows to benchmark and compare different graph databse systems. Currently the framework supports [OrientDB](http://www.orientechnologies.com/orientdb/), [Neo4j](http://neo4j.com/), [Sparksee](http://www.sparsity-technologies.com/), [HyperGraphDB](http://www.hypergraphdb.org/) and [Tinkerpop](http://tinkerpop.apache.org/) (with Neo4J and TinkerGraph as backend).
  
  The purpose of this framework is to examine the performance of each graph database in terms of execution time. The benchmark is composed of four workloads, Clustering, Massive Insertion, Single Insertion and Query Workload. Every workload has been designed to simulate common operations in graph database systems.
 
