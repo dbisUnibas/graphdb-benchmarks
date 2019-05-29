@@ -154,7 +154,13 @@ public class Utils {
         } else if ( GraphDatabaseType.ORIENT_DB == type ) {
             graphDatabase = new OrientGraphDatabase( config, dbStorageDirectory );
         } else if ( GraphDatabaseType.SPARKSEE == type ) {
-            graphDatabase = new SparkseeGraphDatabase( config, dbStorageDirectory );
+            graphDatabase = new SparkseeGraphDatabase(config, dbStorageDirectory);
+        } else if ( GraphDatabaseType.TINKERPOP_NEO4J == type ) {
+            graphDatabase = new TinkerPopNeo4j(config, type, dbStorageDirectory);
+        } else if (GraphDatabaseType.TINKERPOP_TINKERGRAPH == type) {
+            graphDatabase = new TinkerPopTinkerGraph(config, dbStorageDirectory);
+        } else if (GraphDatabaseType.TINKERPOP_NEO4J_HA == type) {
+            graphDatabase = new TinkerPopNeo4j(config, type, dbStorageDirectory);
         } else if ( GraphDatabaseType.HYPERGRAPH_DB == type ) {
             graphDatabase = new HyperGraphDatabase( config, dbStorageDirectory );
         } else {

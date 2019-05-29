@@ -13,6 +13,7 @@ import org.neo4j.graphalgo.GraphAlgoFactory;
 import org.neo4j.graphalgo.PathFinder;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.neo4j.graphdb.schema.Schema;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
@@ -347,7 +348,6 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
                 throw new BenchmarkingException("unable to get nodes from node community", e);
             }
         }
-
         return nodes;
     }
 
@@ -499,7 +499,7 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
 
         try (final Transaction tx = beginUnforcedTransaction()) {
             try {
-                Node node = neo4jGraph.findNode(NODE_LABEL, NODE_COMMUNITY, nodeCommunity);
+                Node node = neo4jGraph.findNodes(NODE_LABEL, NODE_COMMUNITY, nodeCommunity).next();
                 community = (Integer) (node.getProperty(COMMUNITY));
                 tx.success();
             } catch (Exception e) {
@@ -540,6 +540,8 @@ public class Neo4jGraphDatabase extends GraphDatabaseBase<Iterator<Node>, Iterat
                 while (nodes.hasNext()) {
                     Node n = nodes.next();
                     Integer nodeCommunity = (Integer) (n.getProperty(COMMUNITY));
+                    //wtf? that's always == community, at least if findNodes() works the way I expect it to...
+                    //probably they meant NODE_COMMUNITY...
                     nodeCommunities.add(nodeCommunity);
                 }
                 tx.success();

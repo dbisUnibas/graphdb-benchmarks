@@ -103,13 +103,18 @@ dependencies {
     compile group: 'org.apache.geronimo.specs', name: 'geronimo-jta_1.1_spec', version:'1.1.1'
     compile group: 'com.tinkerpop.gremlin', name: 'gremlin-groovy', version:'2.6.0'
     compile group: 'com.tinkerpop.gremlin', name: 'gremlin-java', version:'2.6.0'
+    compile group: 'org.apache.tinkerpop', name: 'gremlin-driver', version:'3.4.1'
+    compile group: 'org.apache.tinkerpop', name: 'gremlin-core', version:'3.4.1'
+    compile group: 'org.apache.tinkerpop', name: 'neo4j-gremlin', version:'3.4.1'
+    compile group: 'org.apache.tinkerpop', name: 'tinkergraph-gremlin', version:'3.4.1'
     compile group: 'com.github.stephenc.high-scale-lib', name: 'high-scale-lib', version:'1.1.2'
     compile group: 'com.carrotsearch', name: 'hppc', version:'0.4.2'
     compile group: 'com.sleepycat', name: 'je', version:'5.0.73'
     compile group: 'net.java.dev.jna', name: 'jna', version:'4.0.0'
     compile group: 'org.apache.lucene', name: 'lucene-core', version:'3.6.2'
-    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'3.5.4'
-    compile group: 'org.neo4j', name: 'neo4j', version:'3.5.4'
+    compile group: 'org.neo4j', name: 'neo4j-cypher', version:'3.4.0'
+    compile group: 'org.neo4j', name: 'neo4j', version:'3.4.0'
+    compile group: 'org.neo4j', name: 'neo4j-tinkerpop-api-impl', version:'0.9-3.4.0'
     compile group: 'com.orientechnologies', name: 'orientdb-graphdb', version: '3.0.18'
     compile group: 'com.tinkerpop.blueprints', name: 'blueprints-orient-graph', version: '2.4.0'
     compile group: 'com.tinkerpop', name: 'pipes', version:'2.6.0'
@@ -142,6 +147,7 @@ jar {
 
 shadowJar {
     classifier = null
+    mergeServiceFiles()
     zip64 = true
 }
 
