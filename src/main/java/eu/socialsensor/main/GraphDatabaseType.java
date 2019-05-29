@@ -17,6 +17,7 @@ public enum GraphDatabaseType {
     TINKERPOP_NEO4J("gremlin-neo4j", null, "tinkerpop neo4j"),
     TINKERPOP_NEO4J_HA("gremlin-neo4j", null, "tinkerpop neo4j HACluster"),
     TINKERPOP_TINKERGRAPH("gremlin-tinkergraph", null, "tinkerpop tinkergraph");
+    HYPERGRAPH_DB("HyperGraphDB", null, "HyperGraph");
 
     private final String backend;
     private final String api;

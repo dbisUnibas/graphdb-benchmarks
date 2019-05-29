@@ -62,6 +62,11 @@ public class GraphDatabaseBenchmark {
             case SINGLE_INSERTION:
                 benchmark = new SingleInsertionBenchmark( config );
                 break;
+
+            case DISTRIBUTED_SINGLE_INSERTION:
+                benchmark = new DistributedSingleInsertionBenchmark( config );
+                break;
+
             case FIND_ADJACENT_NODES:
                 benchmark = new FindNodesOfAllEdgesBenchmark( config );
                 break;

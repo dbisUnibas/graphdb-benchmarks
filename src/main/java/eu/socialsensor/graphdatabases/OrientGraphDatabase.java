@@ -70,6 +70,11 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
         createSchema();
     }
 
+    @Override
+    public void createGraphForDistributedSingleLoad() {
+
+    }
+
 
     @SuppressWarnings("deprecation")
     @Override
@@ -90,6 +95,11 @@ public class OrientGraphDatabase extends GraphDatabaseBase<Iterator<Vertex>, Ite
     public void singleModeLoading( File dataPath, File resultsPath, int scenarioNumber ) {
         Insertion orientSingleInsertion = new OrientSingleInsertion( this.graph, resultsPath );
         orientSingleInsertion.createGraph( dataPath, scenarioNumber );
+    }
+
+    @Override
+    public void distributedSingleModeLoading(File dataPath, File resultsPath, int scenarioNumber) {
+
     }
 
 

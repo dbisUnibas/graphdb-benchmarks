@@ -25,6 +25,13 @@ repositories {
 
     //
     jcenter()
+
+    // Hypergraph DB
+    maven {
+        url 'http://hypergraphdb.org/maven/'
+    }
+    
+    
 }
 
 
@@ -117,7 +124,11 @@ dependencies {
     compile group: 'com.sparsity', name: 'sparkseejava', version:'5.0.0'
     compile group: 'com.tinkerpop.blueprints', name: 'blueprints-sparksee-graph', version:'2.6.0'
     compile group: 'com.codahale.metrics', name: 'metrics-core', version:'3.0.0-BETA3'
-	
+
+    // Hypergraph DB
+    compile group: 'org.hypergraphdb', name: 'hgbdbje', version: '1.4-SNAPSHOT'
+    compile group: 'org.hypergraphdb', name: 'hgdbp2p', version: '1.4-SNAPSHOT'
+    compile group: 'org.sharegov', name: 'mjson', version: '1.4.0'
 	// ----- test -----
     testCompile group: 'junit', name: 'junit', version:'4.11'
 }
@@ -153,7 +164,6 @@ artifacts {
 javadoc {
     failOnError = false
 }
-
 
 
 
